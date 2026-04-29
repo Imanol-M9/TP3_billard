@@ -110,7 +110,7 @@ for cerlce in TROU:
 
 ball = canvas.create_oval(*((100, 100), (100 + RAYON, 100 + RAYON)), fill="white")
 (x0, y0, x1, y1) = canvas.coords(ball)
-canvas.move(ball, 100, 100)
+canvas.move(ball, 1, 0)
 (x0f, y0f, x1f, y1f) = canvas.coords(ball)
 
 
