@@ -1,29 +1,73 @@
 import tkinter as tk
 import keyboard
+import time
 
-HAUTEUR = 122
-LONGEUR = 214
-BORDURE = 10
 COOEFICIENT = 4
-RAYON = 5
+HAUTEUR = 122 * COOEFICIENT
+LONGEUR = 214 * COOEFICIENT
+BORDURE = 10 * COOEFICIENT
+RAYON = 5 * COOEFICIENT
+
+TROU = (
+    (
+        ((LONGEUR // 2 - RAYON), (BORDURE - RAYON)),
+        ((LONGEUR // 2 + RAYON), (BORDURE + RAYON)),
+    ),
+    (
+        (
+            (LONGEUR // 2 - RAYON),
+            (HAUTEUR - BORDURE - RAYON),
+        ),
+        (
+            (LONGEUR // 2 + RAYON),
+            (HAUTEUR - BORDURE + RAYON),
+        ),
+    ),
+    (
+        ((BORDURE - RAYON), (BORDURE - RAYON)),
+        ((BORDURE + RAYON), (BORDURE + RAYON)),
+    ),
+    (
+        ((LONGEUR - BORDURE - RAYON), (HAUTEUR - BORDURE - RAYON)),
+        ((LONGEUR - BORDURE + RAYON), (HAUTEUR - BORDURE + RAYON)),
+    ),
+    (
+        ((LONGEUR - BORDURE - RAYON), (BORDURE - RAYON)),
+        ((LONGEUR - BORDURE + RAYON), (BORDURE + RAYON)),
+    ),
+    (
+        ((BORDURE - RAYON), (HAUTEUR - BORDURE - RAYON)),
+        ((BORDURE + RAYON), (HAUTEUR - BORDURE + RAYON)),
+    ),
+)
 
 
 def fonction_quit():
     fenetre.destroy()
-    shunt_yarded.config(text="postfix : erreur")
-    resultat.config(text="résultat : erreur")
+    angle.config(text="postfix : erreur")
+    angel_text.config(text="résultat : erreur")
     erreur_page.config(text="")
+
+
+def deplacement_ball():
+    canvas.move(ball, 100, 100)
 
 
 fenetre = tk.Tk()
 fenetre.title("Le billard rigolo des gigolos")
 fenetre.attributes("-fullscreen", True)
 
-Bouton = tk.Button(fenetre, text="Calculer", command=None)
-equation = tk.Entry(fenetre)
-shunt_yarded = tk.Label(fenetre, text="postfix : ")
-resultat = tk.Label(fenetre, text="résultat : ")
+
+angle = tk.Scale(fenetre, from_=0, to=180)
+angel_text = tk.Label(fenetre, text="angle")
+vitesse = tk.Scale(fenetre, from_=-50, to=50)
+vitesse_text = tk.Label(fenetre, text="m/s")
 erreur_page = tk.Label(fenetre, text=" ")
+Bouton = tk.Button(
+    fenetre,
+    text=f"Lancer la ball a {vitesse.get()} m/s a {angle.get()} degree",
+    command=None,
+)
 racourti_clav = tk.Label(
     fenetre,
     text="liste racourcise est clavier\n "
@@ -32,46 +76,44 @@ racourti_clav = tk.Label(
     "Ctrl BackSpace  --> vider la console d'entrer",
 )
 
-Bouton.grid(row=3, column=5, padx=5, pady=5)
-equation.grid(row=1, column=5, padx=5, pady=5)
-shunt_yarded.grid(row=4, column=5, padx=5, pady=5)
-resultat.grid(row=5, column=5, padx=5, pady=5)
-erreur_page.grid(row=6, column=5, padx=5, pady=5)
+Bouton.place(x=10, y=HAUTEUR + 150, width=200, height=30)
+angel_text.place(x=43, y=HAUTEUR + 115, width=40, height=20)
+angle.place(x=30, y=HAUTEUR + 15, width=50, height=100)
+
+vitesse_text.place(x=107, y=HAUTEUR + 115, width=40, height=20)
+vitesse.place(x=100, y=HAUTEUR + 15, width=50, height=100)
+
 racourti_clav.grid(row=1, column=6, padx=5, pady=5)
 
 
 keyboard.add_hotkey("esc", fonction_quit)
-keyboard.add_hotkey("enter", None)
-
-
-fenetre.geometry("800x600")
-fenetre.title("Canvas Demo")
-
-trou = ()
+keyboard.add_hotkey("enter", deplacement_ball)
+# keyboard.add_hotkey("",None)
 
 
 canvas = tk.Canvas(
     fenetre,
-    width=LONGEUR * COOEFICIENT,
-    height=HAUTEUR * COOEFICIENT,
+    width=LONGEUR,
+    height=HAUTEUR,
     bg="#4E4E4E",
 )
-# table = tk.Canvas(
-#     fenetre,
-#     width=DIMENTION_X_TALBE * COOEFICIENT,
-#     height=DIMENTION_y_TALBE * COOEFICIENT,
-#     bg="#05A313",
-# )
-# table.grid(row=0, column=0, padx=0, pady=0)
-canvas.grid(row=0, column=0, padx=0, pady=0)
+canvas.place(x=0, y=0, width=LONGEUR, height=HAUTEUR)
 
 canvas.create_rectangle(
-    (BORDURE * COOEFICIENT, BORDURE * COOEFICIENT),
-    ((LONGEUR - BORDURE) * COOEFICIENT, (HAUTEUR - BORDURE) * COOEFICIENT),
+    (BORDURE, BORDURE),
+    ((LONGEUR - BORDURE), (HAUTEUR - BORDURE)),
     fill="green",
 )
-for cerlce in trou:
-    canvas.create_oval(*cerlce, fill="purple")
+for cerlce in TROU:
+    canvas.create_oval(*cerlce, fill="black")
 
 
+ball = canvas.create_oval(*((100, 100), (100 + RAYON, 100 + RAYON)), fill="white")
+(x0, y0, x1, y1) = canvas.coords(ball)
+canvas.move(ball, 100, 100)
+(x0f, y0f, x1f, y1f) = canvas.coords(ball)
+
+
+print(x0)
+print(x0f)
 fenetre.mainloop()
