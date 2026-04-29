@@ -3,10 +3,9 @@ import keyboard
 
 HAUTEUR = 122
 LONGEUR = 214
-BORDURE = 14
+BORDURE = 10
 COOEFICIENT = 4
-
-
+RAYON = 5
 
 
 def fonction_quit():
@@ -18,6 +17,7 @@ def fonction_quit():
 
 fenetre = tk.Tk()
 fenetre.title("Le billard rigolo des gigolos")
+fenetre.attributes("-fullscreen", True)
 
 Bouton = tk.Button(fenetre, text="Calculer", command=None)
 equation = tk.Entry(fenetre)
@@ -66,9 +66,8 @@ canvas = tk.Canvas(
 canvas.grid(row=0, column=0, padx=0, pady=0)
 
 canvas.create_rectangle(
-    (BORDURE),
-    (BORDURE)
-    (555, 444),
+    (BORDURE * COOEFICIENT, BORDURE * COOEFICIENT),
+    ((LONGEUR - BORDURE) * COOEFICIENT, (HAUTEUR - BORDURE) * COOEFICIENT),
     fill="green",
 )
 for cerlce in trou:
