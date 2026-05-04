@@ -18,7 +18,12 @@ class Ball:
             print("Collision avec le mur")
             return False
         return True
-
+    
+    def ismobile(self, epsilon):
+        if np.linalg.norm(self.speed) <= epsilon:
+            return False
+        else: return True
+            
     def speed_shift(self, Z: str):
         match Z:
             case "x"|"X":
