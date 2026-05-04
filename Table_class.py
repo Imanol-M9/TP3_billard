@@ -7,6 +7,4 @@ class Table:
         self.base = base
         self.balls = balls
     
-    def __str__(self):
-        print(f"""
-""")
+    
