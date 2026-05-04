@@ -60,7 +60,7 @@ def changement_test(donner):
 fenetre = tk.Tk()
 fenetre.title("Le billard rigolo des gigolos")
 fenetre.attributes("-fullscreen", True)
-
+tk.Button(fenetre, text="Choisissez un fichier de configuration", command="Choisir fichier").pack()
 
 canvas = tk.Canvas(
     fenetre,
@@ -109,7 +109,6 @@ angle.place(x=30, y=HAUTEUR + 15, width=50, height=100)
 vitesse_text.place(x=107, y=HAUTEUR + 115, width=40, height=20)
 vitesse.place(x=100, y=HAUTEUR + 15, width=50, height=100)
 
-racourti_clav.grid(row=1, column=6, padx=5, pady=5)
 
 
 keyboard.add_hotkey("esc", fonction_quit)
