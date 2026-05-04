@@ -6,6 +6,7 @@ class Ball:
         self.angle = np.radians(angle)
         self.norm = norm
         self.speed = np.array([np.cos(self.angle)*self.norm, np.sin(self.angle)*self.norm])
+        self.rayon = 5
     
     def step(self, step:float):
         self.position = self.position + self.speed*step
