@@ -6,5 +6,3 @@ class Table:
         self.height = height
         self.base = base
         self.balls = balls
-    
-    
