@@ -1,5 +1,6 @@
 import tkinter as tk
 import keyboard
+import math
 
 
 COOEFICIENT = 4
@@ -7,6 +8,9 @@ HAUTEUR = 122 * COOEFICIENT
 LONGEUR = 214 * COOEFICIENT
 BORDURE = 10 * COOEFICIENT
 RAYON = 5 * COOEFICIENT
+PAT = 25
+FROTEMENT = 0.3
+list_fleche = []
 
 TROU = (
     (
@@ -46,26 +50,48 @@ def fonction_quit():
     fenetre.destroy()
 
 
+def supression_fleche():
+    for f in list_fleche:
+        canvas.delete(f)
+    bouton.config(text=f"Lancer la ball a {vitesse.get()} m/s a {angle.get()} degree")
+
+
 def deplacement_ball_initiation():
+    supression_fleche()
     print("ttttttttttttttttttt")
-    Vx = vitesse.get()
-    Vy = vitesse.get()
+    Vx = COOEFICIENT*(-vitesse.get() * math.cos(math.radians(180 + angle.get())))
+    Vy = COOEFICIENT*(vitesse.get() * math.sin(math.radians(180 + angle.get())))
     deplacement_ball(Vx, Vy)
 
 
 def deplacement_ball(Vx, Vy):
     print(f"{Vx, Vy}")
     canvas.move(ball, Vx, Vy)
-    if Vx > 0 and Vy > 0:
-        canvas.after(25, deplacement_ball, Vx - 1, Vy - 1)
+    if Vx != 0 and Vy != 0:
+        canvas.after(
+            PAT, deplacement_ball, Vx * (1 - FROTEMENT *1), Vy * (1 - FROTEMENT * 1)
+        )
 
 
 def changement_test(donner):
-    bouton.config(text=f"Lancer la ball a {vitesse.get()} m/s a {angle.get()} degree")
+    supression_fleche()
     print(
         canvas.coords(ball)[0] + RAYON + vitesse.get(),
         canvas.coords(ball)[1] + RAYON / 2 + vitesse.get(),
+        math.cos(math.radians(angle.get())),
+        math.sin(math.radians(angle.get())),
     )
+    fleche = canvas.create_line(
+        (canvas.coords(ball)[0]) + RAYON / 2,
+        canvas.coords(ball)[1] + RAYON / 2,
+        (canvas.coords(ball)[0] + RAYON / 2)
+        + -vitesse.get() * math.cos(math.radians(180 + angle.get())),
+        (canvas.coords(ball)[1] + RAYON / 2)
+        + vitesse.get() * math.sin(math.radians(180 + angle.get())),
+        arrow="last",
+        width=3,
+    )
+    list_fleche.append(fleche)
 
 
 fenetre = tk.Tk()
@@ -103,15 +129,6 @@ for cerlce in TROU:
 
 ball = canvas.create_oval(*((100, 100), (100 + RAYON, 100 + RAYON)), fill="white")
 
-fleche = canvas.create_line(
-    (canvas.coords(ball)[0]) + RAYON,
-    canvas.coords(ball)[1] + RAYON / 2,
-    canvas.coords(ball)[0] + RAYON + vitesse.get() + 100,
-    canvas.coords(ball)[1] + RAYON / 2 + vitesse.get() + 100,
-    arrow="last",
-    width=3,
-)
-
 
 (x0, y0, x1, y1) = canvas.coords(ball)
 canvas.move(ball, 1, 0)
@@ -133,8 +150,6 @@ angle.place(x=30, y=HAUTEUR + 15, width=50, height=100)
 
 vitesse_text.place(x=107, y=HAUTEUR + 115, width=40, height=20)
 vitesse.place(x=100, y=HAUTEUR + 15, width=50, height=100)
-
-racourti_clav.grid(row=1, column=6, padx=5, pady=5)
 
 
 keyboard.add_hotkey("esc", fonction_quit)
