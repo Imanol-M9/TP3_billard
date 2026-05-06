@@ -21,17 +21,18 @@ class Table:
         with open(filename, "w", newline="") as file:
             
 
-            if self.friction <= EPSILON:
-                while self.balls[0].collision_with_wall(self.base, self.height):
-                    rows.append((time, self.balls[0].position, self.balls[0].speed))
-                    self.balls[0].step(self.friction)
-                    time += 1
+            # if self.friction <= EPSILON:
+            #     while self.balls[0].collision_with_wall(self.base, self.height):
+            #         rows.append((time, self.balls[0].position, self.balls[0].speed))
+            #         self.balls[0].step(self.friction)
+            #         time += 1
 
-            else:
-                while self.balls[0].ismobile(EPSILON):
-                    rows.append((time, self.balls[0].position, self.balls[0].speed))
-                    self.balls[0].step(self.friction)
-                    time += 1
+            # else:
+            while self.balls[0].ismobile(EPSILON):
+                rows.append((time, self.balls[0].position, self.balls[0].speed))
+                self.balls[0].step(self.friction)
+                self.balls[0].collision_with_wall(self.base, self.height)
+                time += 1
 
             
             rows.append((time, self.balls[0].position, self.balls[0].speed))
@@ -45,8 +46,6 @@ class Table:
 
 
 
-
-
-white = Ball("White", [100,100], 0, 5, 0)
-table = Table(122, 214, [white], 0)
+white = Ball("White", [200,100], 0, 20)
+table = Table(122, 214, [white], 0.2)
 table.step_and_write()
