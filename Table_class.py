@@ -7,9 +7,10 @@ import csv
 EPSILON = 0.05
 
 class Table:
-    def __init__(self, height, base, balls: list[Ball]):
+    def __init__(self, height, base, balls: list[Ball], friction):
         self.height = height
         self.base = base
+        self.friction = friction
         self.balls = balls
     
     def step_and_write(self, filename="current_sim.csv"):
@@ -19,17 +20,33 @@ class Table:
 
         with open(filename, "w", newline="") as file:
             
-            while self.balls[0].collision_with_wall(self.base, self.height) or self.balls[0].ismobile(EPSILON) or time >= 1000:
-                rows.append((time, self.balls[0].position, self.balls[0].speed))
-                self.balls[0].step(0.025)
-                time += 1
+
+            if self.friction <= EPSILON:
+                while self.balls[0].collision_with_wall(self.base, self.height):
+                    rows.append((time, self.balls[0].position, self.balls[0].speed))
+                    self.balls[0].step(self.friction)
+                    time += 1
+
+            else:
+                while self.balls[0].ismobile(EPSILON):
+                    rows.append((time, self.balls[0].position, self.balls[0].speed))
+                    self.balls[0].step(self.friction)
+                    time += 1
+
+            
             rows.append((time, self.balls[0].position, self.balls[0].speed))
             csvwriter = csv.writer(file)
             csvwriter.writerow(fields)
             csvwriter.writerows(rows)
 
 
-white = Ball("White", [100,100], 0, 20, 0.2)
-table = Table(122, 214, [white])
-print(table.balls[0].ismobile(EPSILON))
+
+
+
+
+
+
+
+white = Ball("White", [100,100], 0, 5, 0)
+table = Table(122, 214, [white], 0)
 table.step_and_write()
