@@ -14,7 +14,7 @@ class Table:
         self.balls = balls
     
     def step_and_write(self, filename="current_sim.csv"):
-        fields = ["Time", "Position_White", "Speed_White"]
+        fields = ["Time", "Base", "Height", "Friction" , "Position_White", "Speed_White"]
         rows = []
         time = 0
 
@@ -29,13 +29,13 @@ class Table:
 
             # else:
             while self.balls[0].ismobile(EPSILON):
-                rows.append((time, self.balls[0].position, self.balls[0].speed))
+                rows.append((time, self.base, self.height, self.friction, self.balls[0].position, self.balls[0].speed))
                 self.balls[0].step(self.friction)
                 self.balls[0].collision_with_wall(self.base, self.height)
                 time += 1
 
             
-            rows.append((time, self.balls[0].position, self.balls[0].speed))
+            rows.append((time, self.base, self.height, self.friction, self.balls[0].position, self.balls[0].speed))
             csvwriter = csv.writer(file)
             csvwriter.writerow(fields)
             csvwriter.writerows(rows)
