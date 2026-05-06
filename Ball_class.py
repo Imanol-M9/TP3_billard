@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 class Ball:
     def __init__(self, color:str, position:list[float]=[0, 0], angle:float=0, norm:float=0, friction:float = 0):
@@ -8,7 +9,6 @@ class Ball:
         self.norm = norm
         self.speed = np.array([np.cos(self.angle)*self.norm, np.sin(self.angle)*self.norm])
         self.rayon = 5
-        self.friction = friction
     
     def collision_with_wall(self, base, height):
         pmin = np.array([[self.rayon, self.rayon]])
@@ -18,18 +18,28 @@ class Ball:
             print("Collision avec le mur")
             return False
         return True
-
+    
+    def ismobile(self, epsilon):
+        if math.sqrt(self.speed[0] **2 + self.speed[1] **2) >= epsilon:
+            return True
+        else:
+            return False
+        
+        
+        
+        
+            
     def speed_shift(self, Z: str):
         match Z:
             case "x"|"X":
-                self.speed[0,0] *= -1
+                self.speed[0] *= -1
             case "y"|"Y":
-                self.speed[0,1] *= 1
+                self.speed[1] *= 1
             case _:
                 print("Erreur de Changement de vitesse: La vitesse n'a pas été proprement changé.")
     
     
-    def step(self, step:float):
-        self.speed = self.speed * (1 - self.friction * step)
+    def step(self, friction, step:float= 0.025):
+        self.speed = self.speed * (1 - friction * step)
         
         self.position = self.position + self.speed*step
