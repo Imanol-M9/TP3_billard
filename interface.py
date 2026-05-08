@@ -50,6 +50,14 @@ def fonction_quit():
     fenetre.destroy()
 
 
+def DLC():
+    Coeffficient_friction_text.place(x=45, y=HAUTEUR + 140 + 100, width=55, height=20)
+    Coeffficient_friction.place(x=32, y=HAUTEUR + 140, width=50, height=100)
+    Coeffficient_de_restitution.place(x=102, y=HAUTEUR + 140, width=50, height=100)
+    Coeffficient_de_restitution_texte.place(x=109, y=HAUTEUR + 240, width=55, height=20)
+    bouton.place(x=10, y=HAUTEUR + 150 + 120)
+
+
 def supression_fleche():
     for f in list_fleche:
         canvas.delete(f)
@@ -59,8 +67,8 @@ def supression_fleche():
 def deplacement_ball_initiation():
     supression_fleche()
     print("ttttttttttttttttttt")
-    Vx = COOEFICIENT*(-vitesse.get() * math.cos(math.radians(180 + angle.get())))
-    Vy = COOEFICIENT*(vitesse.get() * math.sin(math.radians(180 + angle.get())))
+    Vx = COOEFICIENT * (-vitesse.get() * math.cos(math.radians(180 + angle.get())))
+    Vy = COOEFICIENT * (vitesse.get() * math.sin(math.radians(180 + angle.get())))
     deplacement_ball(Vx, Vy)
 
 
@@ -69,7 +77,10 @@ def deplacement_ball(Vx, Vy):
     canvas.move(ball, Vx, Vy)
     if Vx != 0 and Vy != 0:
         canvas.after(
-            PAT, deplacement_ball, Vx * (1 - FROTEMENT *1), Vy * (1 - FROTEMENT * 1)
+            PAT,
+            deplacement_ball,
+            Vx * (1 - FROTEMENT * PAT / 100),
+            Vy * (1 - FROTEMENT * PAT / 100),
         )
 
 
@@ -101,15 +112,98 @@ fenetre.attributes("-fullscreen", True)
 
 angle = tk.Scale(fenetre, from_=0, to=180, command=changement_test)
 angel_text = tk.Label(fenetre, text="angle")
-vitesse = tk.Scale(fenetre, from_=-50, to=50, command=changement_test)
+vitesse = tk.Scale(fenetre, from_=-25, to=25, command=changement_test)
 vitesse_text = tk.Label(fenetre, text="m/s")
 
+Coeffficient_friction = tk.Scale(fenetre, from_=0, to=1, resolution=0.01)
+Coeffficient_friction_text = tk.Label(fenetre, text="frotement")
+Coeffficient_de_restitution = tk.Scale(fenetre, from_=0, to=100)
+Coeffficient_de_restitution_texte = tk.Label(fenetre, text="perte E (%)")
+
+Frame1 = tk.Frame(fenetre, borderwidth=2, relief="groove")
+
+
+COULEUR = "#7216CE"
+COULEUR_FOND = "#000000"
+retour_ini = tk.Button(
+    Frame1,
+    text="<<",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+retour_moin_un = tk.Button(
+    Frame1,
+    text="<",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+pause = tk.Button(
+    Frame1,
+    text="⏸",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+continu = tk.Button(
+    Frame1,
+    text="▶",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+avant_un = tk.Button(
+    Frame1,
+    text=">",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+fin_sim = tk.Button(
+    Frame1,
+    text=">>",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
 
 bouton = tk.Button(
     fenetre,
     text=f"Lancer la ball a {vitesse.get()} m/s a {angle.get()} degree",
     command=deplacement_ball_initiation,
 )
+
 
 canvas = tk.Canvas(
     fenetre,
@@ -135,25 +229,29 @@ canvas.move(ball, 1, 0)
 (x0f, y0f, x1f, y1f) = canvas.coords(ball)
 
 
-racourti_clav = tk.Label(
-    fenetre,
-    text="liste racourcise est clavier\n "
-    "Escape --> sortire du programe\n "
-    "Enter --> effectuer le calcule\n "
-    "Ctrl BackSpace  --> vider la console d'entrer",
-)
-
-
 bouton.place(x=10, y=HAUTEUR + 150, width=200, height=30)
-angel_text.place(x=43, y=HAUTEUR + 115, width=40, height=20)
-angle.place(x=30, y=HAUTEUR + 15, width=50, height=100)
+angel_text.place(x=45, y=HAUTEUR + 115, width=40, height=20)
+angle.place(x=32, y=HAUTEUR + 15, width=50, height=100)
 
-vitesse_text.place(x=107, y=HAUTEUR + 115, width=40, height=20)
-vitesse.place(x=100, y=HAUTEUR + 15, width=50, height=100)
+vitesse_text.place(x=109, y=HAUTEUR + 115, width=40, height=20)
+vitesse.place(x=102, y=HAUTEUR + 15, width=50, height=100)
 
+Frame1.place(x=250, y=HAUTEUR + 10, width=500, height=200)
+
+
+DIMENTION = 50
+
+retour_ini.place(x=0, y=0, width=DIMENTION, height=DIMENTION)
+retour_moin_un.place(x=DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
+pause.place(x=2 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
+continu.place(x=3 * DIMENTION, y=DIMENTION, width=DIMENTION, height=DIMENTION)
+avant_un.place(x=3 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
+fin_sim.place(x=4 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
 
 keyboard.add_hotkey("esc", fonction_quit)
-# keyboard.add_hotkey("enter", deplacement_ball(vitesse.get(),vitesse.get()))
+keyboard.add_hotkey("Alt+f+4", DLC)
+
+keyboard.add_hotkey("enter", deplacement_ball_initiation)
 # keyboard.add_hotkey("",None)
 
 
