@@ -120,12 +120,90 @@ Coeffficient_friction_text = tk.Label(fenetre, text="frotement")
 Coeffficient_de_restitution = tk.Scale(fenetre, from_=0, to=100)
 Coeffficient_de_restitution_texte = tk.Label(fenetre, text="perte E (%)")
 
+Frame1 = tk.Frame(fenetre, borderwidth=2, relief="groove")
+
+
+COULEUR = "#7216CE"
+COULEUR_FOND = "#000000"
+retour_ini = tk.Button(
+    Frame1,
+    text="<<",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+retour_moin_un = tk.Button(
+    Frame1,
+    text="<",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+pause = tk.Button(
+    Frame1,
+    text="⏸",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+continu = tk.Button(
+    Frame1,
+    text="▶",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+avant_un = tk.Button(
+    Frame1,
+    text=">",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
+fin_sim = tk.Button(
+    Frame1,
+    text=">>",
+    font=("Arial", 14),
+    fg=COULEUR_FOND,
+    bg=COULEUR,
+    width=10,
+    height=2,
+    padx=10,
+    pady=5,
+    relief=tk.RAISED,
+)
 
 bouton = tk.Button(
     fenetre,
     text=f"Lancer la ball a {vitesse.get()} m/s a {angle.get()} degree",
     command=deplacement_ball_initiation,
 )
+
 
 canvas = tk.Canvas(
     fenetre,
@@ -158,6 +236,17 @@ angle.place(x=32, y=HAUTEUR + 15, width=50, height=100)
 vitesse_text.place(x=109, y=HAUTEUR + 115, width=40, height=20)
 vitesse.place(x=102, y=HAUTEUR + 15, width=50, height=100)
 
+Frame1.place(x=250, y=HAUTEUR + 10, width=500, height=200)
+
+
+DIMENTION = 50
+
+retour_ini.place(x=0, y=0, width=DIMENTION, height=DIMENTION)
+retour_moin_un.place(x=DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
+pause.place(x=2 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
+continu.place(x=3 * DIMENTION, y=DIMENTION, width=DIMENTION, height=DIMENTION)
+avant_un.place(x=3 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
+fin_sim.place(x=4 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
 
 keyboard.add_hotkey("esc", fonction_quit)
 keyboard.add_hotkey("Alt+f+4", DLC)
