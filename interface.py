@@ -1,6 +1,9 @@
 import tkinter as tk
+from Ball_class import Ball, ensemble_balls
+from Table_class import Table, table
 import keyboard
 import math
+import main
 
 
 COOEFICIENT = 4
@@ -66,21 +69,23 @@ def supression_fleche():
 
 def deplacement_ball_initiation():
     supression_fleche()
-    print("ttttttttttttttttttt")
     Vx = COOEFICIENT * (-vitesse.get() * math.cos(math.radians(180 + angle.get())))
     Vy = COOEFICIENT * (vitesse.get() * math.sin(math.radians(180 + angle.get())))
-    deplacement_ball(Vx, Vy)
+    ensemble_balls[0].set_mouvement(angle.get(), vitesse.get())
+    deplacement_ball(Vx, Vy, 0)
 
 
-def deplacement_ball(Vx, Vy):
-    print(f"{Vx, Vy}")
+def deplacement_ball(Vx, Vy, temps=0):
+    print(f"{Vx, Vy},{temps}")
     canvas.move(ball, Vx, Vy)
+    table.step_and_write(temps)
     if Vx != 0 and Vy != 0:
         canvas.after(
             PAT,
             deplacement_ball,
             Vx * (1 - FROTEMENT * PAT / 100),
             Vy * (1 - FROTEMENT * PAT / 100),
+            temps + 1,
         )
 
 
@@ -198,6 +203,7 @@ fin_sim = tk.Button(
     relief=tk.RAISED,
 )
 
+
 bouton = tk.Button(
     fenetre,
     text=f"Lancer la ball a {vitesse.get()} m/s a {angle.get()} degree",
@@ -255,4 +261,5 @@ keyboard.add_hotkey("enter", deplacement_ball_initiation)
 # keyboard.add_hotkey("",None)
 
 
-fenetre.mainloop()
+if __name__ == "__main__":
+    fenetre.mainloop()
