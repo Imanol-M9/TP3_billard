@@ -48,7 +48,7 @@ class Table:
             # self.balls[0].step(self.friction)
             # self.time += 1
 
-            self.rows.append((info, [0, 0], [0, 0]))
+            self.rows.append((info))
             csvwriter = csv.writer(file)
             csvwriter.writerows(self.rows)
 

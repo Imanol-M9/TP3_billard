@@ -76,15 +76,28 @@ def deplacement_ball_initiation():
 
 
 def deplacement_ball(Vx, Vy, temps=0):
+    if -main.EPSILON < Vx < main.EPSILON:
+        Vx = 0
+    if -main.EPSILON < Vy < main.EPSILON:
+        Vy = 0
     print(f"{Vx, Vy},{temps}")
     canvas.move(ball, Vx, Vy)
-    table.step_and_write(temps)
-    if Vx != 0 and Vy != 0:
+    table.step_and_write((temps, canvas.coords(ball), [Vx, Vy]))
+    if Vx < main.EPSILON:
+        Vx = 0
+    else:
+        Vx = Vx * (1 - FROTEMENT * PAT / 100)
+    if Vy < main.EPSILON:
+        Vy = 0
+    else:
+        Vy = Vy * (1 - FROTEMENT * PAT / 100)
+    print(f"{Vx, Vy},{temps}")
+    if Vx != 0 or Vy != 0:
         canvas.after(
             PAT,
             deplacement_ball,
-            Vx * (1 - FROTEMENT * PAT / 100),
-            Vy * (1 - FROTEMENT * PAT / 100),
+            Vx,
+            Vy,
             temps + 1,
         )
 
