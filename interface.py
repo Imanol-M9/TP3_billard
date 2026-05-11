@@ -4,8 +4,10 @@ from Table_class import Table, table
 import keyboard
 import math
 import main
+import random
 
 list_fleche = []
+dic_and_ball = {}
 
 
 def fonction_quit():
@@ -34,15 +36,23 @@ def deplacement_ball_initiation():
     supression_fleche()
     Vx = main.COOEFICIENT * (-vitesse.get() * math.cos(math.radians(180 + angle.get())))
     Vy = main.COOEFICIENT * (vitesse.get() * math.sin(math.radians(180 + angle.get())))
-    ensemble_balls[0].set_mouvement(angle.get(), vitesse.get())
-    deplacement_ball(Vx, Vy, 0)
+    ensemble_balls["white"].set_mouvement(angle.get(), vitesse.get())
+    deplacement_ball(Vx, Vy)
 
 
 def deplacement_ball(Vx, Vy, temps=0):
     print(f"{Vx, Vy},{temps}")
-    canvas.move(ball, Vx, Vy)
+    for ball in ensemble_balls:
+        if ensemble_balls[ball].norm != 0:
+            canvas.move(dic_and_ball["white"], Vx, Vy)
     table.step_and_write(
-        (temps, ensemble_balls[0].centre(canvas.coords(ball)), [Vx, Vy])
+        (
+            temps,
+            ensemble_balls["white"].centre(
+                canvas.coords(ensemble_balls["white"].objet_canva)
+            ),
+            [Vx, Vy],
+        )
     )
     if -main.EPSILON < Vx < main.EPSILON:
         Vx = 0
@@ -67,17 +77,21 @@ def deplacement_ball(Vx, Vy, temps=0):
 def changement_test(donner):
     supression_fleche()
     print(
-        canvas.coords(ball)[0] + 2 * main.RAYON + vitesse.get(),
-        canvas.coords(ball)[1] + main.RAYON + vitesse.get(),
+        canvas.coords(ensemble_balls["white"].objet_canva)[0]
+        + 2 * main.RAYON
+        + vitesse.get(),
+        canvas.coords(ensemble_balls["white"].objet_canva)[1]
+        + main.RAYON
+        + vitesse.get(),
         math.cos(math.radians(angle.get())),
         math.sin(math.radians(angle.get())),
     )
     fleche = canvas.create_line(
-        (canvas.coords(ball)[0]) + main.RAYON,
-        canvas.coords(ball)[1] + main.RAYON,
-        (canvas.coords(ball)[0] + main.RAYON)
+        (canvas.coords(ensemble_balls["white"].objet_canva)[0]) + main.RAYON,
+        canvas.coords(ensemble_balls["white"].objet_canva)[1] + main.RAYON,
+        (canvas.coords(ensemble_balls["white"].objet_canva)[0] + main.RAYON)
         + -vitesse.get() * math.cos(math.radians(180 + angle.get())),
-        (canvas.coords(ball)[1] + main.RAYON)
+        (canvas.coords(ensemble_balls["white"].objet_canva)[1] + main.RAYON)
         + vitesse.get() * math.sin(math.radians(180 + angle.get())),
         arrow="last",
         width=3,
@@ -90,7 +104,7 @@ fenetre.title("Le billard rigolo des gigolos")
 fenetre.attributes("-fullscreen", True)
 
 
-angle = tk.Scale(fenetre, from_=0, to=180, command=changement_test)
+angle = tk.Scale(fenetre, from_=0, to=360, command=changement_test)
 angel_text = tk.Label(fenetre, text="angle")
 vitesse = tk.Scale(fenetre, from_=-25, to=25, command=changement_test)
 vitesse_text = tk.Label(fenetre, text="m/s")
@@ -202,12 +216,24 @@ canvas.create_rectangle(
 for cerlce in main.TROU:
     canvas.create_oval(*cerlce, fill="black")
 
-ball = canvas.create_oval(
-    *((0, 0), (0 + 2 * main.RAYON, 0 + 2 * main.RAYON)), fill="white"
-)
 
 
-(x0, y0, x1, y1) = canvas.coords(ball)
+for ball in ensemble_balls:
+    INITIAL_POSITION = random.randint(0,100)
+    print(ball)
+    print(ensemble_balls[ball])
+    dic_and_ball[ball] = canvas.create_oval(
+        (
+            (INITIAL_POSITION, INITIAL_POSITION),
+            (INITIAL_POSITION + 2 * main.RAYON, INITIAL_POSITION + 2 * main.RAYON),
+        ),
+        fill=ensemble_balls[ball].color,
+    )
+    ensemble_balls[ball].set_canva(dic_and_ball[ball])
+    print(canvas.coords(ensemble_balls["white"].objet_canva))
+canvas.move( dic_and_ball["white"],100, 250)
+print(dic_and_ball)
+# (x0, y0, x1, y1) = canvas.coords(ball)
 
 
 bouton.place(x=10, y=main.HAUTEUR + 150, width=200, height=30)
