@@ -4,6 +4,7 @@ from Table_class import Table, table
 import keyboard
 import math
 import main
+import random
 
 list_fleche = []
 dic_and_ball = {}
@@ -218,7 +219,7 @@ for cerlce in main.TROU:
 
 
 for ball in ensemble_balls:
-    INITIAL_POSITION = -20
+    INITIAL_POSITION = random.randint(0,100)
     print(ball)
     print(ensemble_balls[ball])
     dic_and_ball[ball] = canvas.create_oval(

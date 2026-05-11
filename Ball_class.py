@@ -70,6 +70,19 @@ class Ball:
 
 white = Ball("White")
 red = Ball("red")
+purple = Ball("purple")
+blue = Ball("blue")
+orange = Ball("orange")
+yellow = Ball("yellow")
+black = Ball("black")
 
 
-ensemble_balls = {"white": white, "red": red}
+ensemble_balls = {
+    "white": white,
+    "red": red,
+    "purple": purple,
+    "blue": blue,
+    "orange": orange,
+    "yellow": yellow,
+    "black": black,
+}
