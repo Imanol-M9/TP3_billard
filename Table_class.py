@@ -1,10 +1,12 @@
-from Ball_class import Ball
+from Ball_class import Ball, ensemble_balls
 import math
 import csv
-#from interface import HAUTEUR, LONGEUR, BORDURE, RAYON
+import main
+import time
 
 
 EPSILON = 0.05
+
 
 class Table:
     def __init__(self, height, base, balls: list[Ball], friction):
@@ -12,41 +14,28 @@ class Table:
         self.base = base
         self.friction = friction
         self.balls = balls
-    
-    def step_and_write(self, filename="current_sim.csv"):
-        fields = ["Time", "Position_White", "Speed_White"]
-        rows = []
-        time = 0
+        self.fields = ["Time", "Position_White", "Speed_White"]
+        self.rows = []
+        self.time = 0
 
-        with open(filename, "w", newline="") as file:
-            
-
-            if self.friction <= EPSILON:
-                while self.balls[0].collision_with_wall(self.base, self.height):
-                    rows.append((time, self.balls[0].position, self.balls[0].speed))
-                    self.balls[0].step(self.friction)
-                    time += 1
-
-            else:
-                while self.balls[0].ismobile(EPSILON):
-                    rows.append((time, self.balls[0].position, self.balls[0].speed))
-                    self.balls[0].step(self.friction)
-                    time += 1
-
-            
-            rows.append((time, self.balls[0].position, self.balls[0].speed))
+    def reset(self):
+        filename = "current_sim.csv"
+        # opening the file with w+ mode truncates the file
+        f = open(filename, "w+")
+        f.close()
+        with open(filename, "a", newline="") as file:
             csvwriter = csv.writer(file)
-            csvwriter.writerow(fields)
-            csvwriter.writerows(rows)
+            csvwriter.writerow(self.fields)
+
+    def step_and_write(self, info, filename="current_sim.csv"):
+
+        with open(filename, "a", newline="") as file:
+            self.rows = []
+
+            self.rows.append((info))
+            csvwriter = csv.writer(file)
+            csvwriter.writerows(self.rows)
 
 
-
-
-
-
-
-
-
-white = Ball("White", [100,100], 0, 5, 0)
-table = Table(122, 214, [white], 0)
-table.step_and_write()
+table = Table(122, 214, ensemble_balls, 0)
+table.reset()
