@@ -9,8 +9,7 @@ class Ball:
         color: str,
         position: list[float] = [0, 0],
         angle: float = 0,
-        norm: float = 0,
-        friction: float = 0,
+        norm: float = 0
     ):
         self.color = color
         self.position = position
@@ -56,13 +55,34 @@ class Ball:
 
         self.position = self.position + self.speed * step
 
+        self.norm = np.linalg.norm(self.speed)
+
     def centre(self, coordoner: tuple):
         return (
             coordoner[0] - main.RAYON,
             coordoner[1] - main.RAYON,
         )
+def collision_dot(Delta_v, n):
+    return np.dot(Delta_v, n)
+
+def speed_ball(ball, v_rel, n):
+    v1 = ball.speef
+    if v_rel > 0:
+        v1 = ball.speed - v_rel * n
+    return v1
+
+def speed_p(p, v_rel, n):
+    v1 = p.speef
+    if v_rel > 0:
+        v1 = p.speed + v_rel * n
+    return v1
 
 
-white = Ball("White", [100, 100], 1, 1, 1)
 
-ensemble_balls = [white]
+white = Ball("White", [100, 100], 1, 1)
+red = Ball("Red", [200, 200], 0, 0)
+
+ensemble_balls = {
+    "white" : white,
+    "red" : red
+}
