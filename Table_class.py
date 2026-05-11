@@ -31,22 +31,6 @@ class Table:
 
         with open(filename, "a", newline="") as file:
             self.rows = []
-            # self.rows = tuple(([info], [0], [0]))
-            # if self.friction <= EPSILON:
-            #     while self.balls[0].collision_with_wall(self.base, self.height):
-            #         self.rows.append(
-            #             (self.time, self.balls[0].position, self.balls[0].speed)
-            #         )
-            #         self.balls[0].step(self.friction)
-            #         self.time += 1
-
-            # else:
-            # while self.balls[0].ismobile(EPSILON):
-            # self.rows.append(
-            #     (self.time, self.balls[0].position, self.balls[0].speed)
-            # )
-            # self.balls[0].step(self.friction)
-            # self.time += 1
 
             self.rows.append((info))
             csvwriter = csv.writer(file)

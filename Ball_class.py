@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import main
 
 
 class Ball:
@@ -54,6 +55,12 @@ class Ball:
         self.speed = self.speed * (1 - friction * step)
 
         self.position = self.position + self.speed * step
+
+    def centre(self, coordoner: tuple):
+        return (
+            coordoner[0] - main.RAYON,
+            coordoner[1] - main.RAYON,
+        )
 
 
 white = Ball("White", [100, 100], 1, 1, 1)
