@@ -1,6 +1,6 @@
 from Ball_class import Ball
 import math
-import csv
+import json
 #from interface import HAUTEUR, LONGEUR, BORDURE, RAYON
 
 
@@ -13,7 +13,7 @@ class Table:
         self.friction = friction
         self.balls = balls
     
-    def step_and_write(self, filename="current_sim.csv"):
+    def step_and_write(self, filename="current_sim.json"):
         fields = ["Time", "Base", "Height", "Friction" , "Position_White", "Speed_White"]
         rows = []
         time = 0
@@ -21,18 +21,18 @@ class Table:
         with open(filename, "w", newline="") as file:
             
 
-            # if self.friction <= EPSILON:
-            #     while self.balls[0].collision_with_wall(self.base, self.height):
-            #         rows.append((time, self.balls[0].position, self.balls[0].speed))
-            #         self.balls[0].step(self.friction)
-            #         time += 1
+            if self.friction <= EPSILON:
+                while self.balls[0].collision_with_wall(self.base, self.height):
+                    rows.append((time, self.balls[0].position, self.balls[0].speed))
+                    self.balls[0].step(self.friction)
+                    time += 1
 
-            # else:
-            while self.balls[0].ismobile(EPSILON):
-                rows.append((time, self.base, self.height, self.friction, self.balls[0].position, self.balls[0].speed))
-                self.balls[0].step(self.friction)
-                self.balls[0].collision_with_wall(self.base, self.height)
-                time += 1
+            else:
+                while self.balls[0].ismobile(EPSILON):
+                    rows.append((time, self.base, self.height, self.friction, self.balls[0].position, self.balls[0].speed))
+                    self.balls[0].step(self.friction)
+                    self.balls[0].collision_with_wall(self.base, self.height)
+                    time += 1
 
             
             rows.append((time, self.base, self.height, self.friction, self.balls[0].position, self.balls[0].speed))
