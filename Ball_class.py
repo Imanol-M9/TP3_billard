@@ -7,10 +7,11 @@ class Ball:
     def __init__(
         self,
         color: str,
-        position: list[float] = [0, 0],
+        position: list[float] = [0, 0, 0, 0],
         angle: float = 0,
         norm: float = 0,
         friction: float = 0,
+        objet_canva=None,
     ):
         self.color = color
         self.position = position
@@ -19,11 +20,15 @@ class Ball:
         self.speed = np.array(
             [np.cos(self.angle) * self.norm, np.sin(self.angle) * self.norm]
         )
-        self.rayon = 5
+        self.rayon = main.RAYON
+        self.objet_canva = objet_canva
 
     def set_mouvement(self, angle: float, norm: float):
         self.angle = angle
         self.norm = norm
+
+    def set_canva(self, objet_can):
+        self.objet_canva = objet_can
 
     def collision_with_wall(self, base, height):
         pmin = np.array([[self.rayon, self.rayon]])
@@ -63,6 +68,8 @@ class Ball:
         )
 
 
-white = Ball("White", [100, 100], 1, 1, 1)
+white = Ball("White")
+red = Ball("red")
 
-ensemble_balls = [white]
+
+ensemble_balls = {"white": white, "red": red}

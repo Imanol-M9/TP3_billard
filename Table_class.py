@@ -18,6 +18,7 @@ class Table:
         self.rows = []
         self.time = 0
 
+        
     def reset(self):
         filename = "current_sim.csv"
         # opening the file with w+ mode truncates the file
@@ -35,6 +36,9 @@ class Table:
             self.rows.append((info))
             csvwriter = csv.writer(file)
             csvwriter.writerows(self.rows)
+
+    def collision(self,ensemble_balls):
+        None
 
 
 table = Table(122, 214, ensemble_balls, 0)
