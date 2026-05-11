@@ -1,5 +1,6 @@
 from Ball_class import Ball, ensemble_balls, collision_dot, speed_ball, speed_p
 import json
+import math
 import main
 import time
 
