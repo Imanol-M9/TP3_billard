@@ -1,0 +1,11 @@
+{
+    "COOEFICIENT": 4,
+    "HAUTEUR": 488 ,
+    "LONGEUR": 856 ,
+    "BORDURE": 40 ,
+    "RAYON": 10,
+    "PAT": 100,
+    "FROTEMENT": 1.2,
+    "EPSILON" : 0.2
+
+}
