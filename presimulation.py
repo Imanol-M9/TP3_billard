@@ -54,56 +54,45 @@ class Liste_Frame:
       tail = tail.avant
     print()
   
-  def insertAfter(self,searchItem, value):
-    newNode = Frame(data=value)
+  # def insertAfter(self,searchItem, value):
+  #   newNode = Frame(data=value)
 
+  #   temp = self.head
+  #   while temp.prochain is not None and temp.info is not searchItem:
+  #     temp = temp.prochain
+    
+  #   newNode.prochain = temp.prochain
+  #   temp.prochain = newNode
+  #   newNode.avant = temp
+
+  #   if newNode.prochain is not None:
+  #     newNode.prochain.prev = newNode
+  #   print("Inserted {} after node {}".format(value,searchItem))
+
+  # def insertBefore(self,searchItem, value):
+  #   newNode = Frame(data=value)
+
+  #   temp = self.head
+  #   while temp.prochain is not None and temp.prochain.data is not searchItem:
+  #     temp = temp.prochain
+    
+  #   newNode.prochain = temp.prochain
+  #   temp.prochain = newNode
+  #   newNode.avant = temp
+
+  #   if newNode.prochain is not None:
+  #     newNode.prochain.prev = newNode
+  #   print("Inserted {} before node {}".format(value,searchItem))
+
+  def search(self,searchItem):
     temp = self.head
+
     while temp.prochain is not None and temp.info is not searchItem:
       temp = temp.prochain
     
-    newNode.prochain = temp.prochain
-    temp.prochain = newNode
-    newNode.avant = temp
-
-    if newNode.prochain is not None:
-      newNode.prochain.prev = newNode
-    print("Inserted {} after node {}".format(value,searchItem))
-
-  def insertBefore(self,searchItem, value):
-    newNode = Frame(data=value)
-
-    temp = self.head
-    while temp.prochain is not None and temp.prochain.data is not searchItem:
-      temp = temp.prochain
-    
-    newNode.prochain = temp.prochain
-    temp.prochain = newNode
-    newNode.avant = temp
-
-    if newNode.prochain is not None:
-      newNode.prochain.prev = newNode
-    print("Inserted {} before node {}".format(value,searchItem))
-
-  def searchAndDelete(self,searchItem):
-    temp = self.head
-
-    while temp.prochain is not None and temp.info is not searchItem:
-      temp = temp.prochain
-    
-    if self.head is None or temp is None:
-      return
-
-    if self.head.info is temp.info:
-      self.head = temp.prochain
-
-    if temp.prochain is not None:
-      temp.prochain.prev = temp.avant
-    
-    if temp.avant is not None:
-      temp.avant.next = temp.prochain
     
     print("Deleted Node\t{}".format(searchItem))
-    return
+    return temp
 
 
 

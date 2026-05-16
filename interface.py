@@ -3,13 +3,13 @@ from Ball_class import Ball, ensemble_balls
 from Table_class import Table, table
 import keyboard
 import math
-import time
 import main
-import random
 import numpy as np
 import presimulation as simu
 
 
+pause = False
+nombre_fram_ecouler = 0
 list_fleche = []
 dic_and_ball = {}
 
@@ -50,35 +50,32 @@ def deplacement_ball_initiation():
             "vitesse": [ensemble_balls[ball].speed[0], ensemble_balls[ball].speed[1]],
             "objet": ensemble_balls[ball].objet_canva,
         }
-        # current["white"],np.cos*[ball]["angle"] *current["norm"],np.sin*current["angle"] *current["norm"])
+        # oui monsieur, je sais que sa revien a faire un objet objet mais sa revien a la meme
+        # chose qu'avec du poo, le truc c'est que l'objet original est modifier donc soit
+        # je fait un copi instentaner de l'objet ou je rejoute un attribu self.historique pour
+        # etre capable de retraser sa trajectoire, svp enlever pas des points pour sa
+        #
+
     simu.all_frame.insertEnd(dic_and_ball)
     deplacement_ball()
 
 
 def deplacement_ball(temps=0):
-    # print(
-    #     f"{ensemble_balls['white'].speed[0], ensemble_balls['white'].speed[1], 'norm :', np.linalg.norm(ensemble_balls['white'].speed), ensemble_balls['white'].angle}"
-    # )
-    # print(ensemble_balls["white"])
+
     dic_and_ball = {}
 
     for ball in ensemble_balls:
-        # print(
-        #     f"setage de norm avec{ensemble_balls[ball].speed[0], ensemble_balls[ball].speed[1]}"
-        # )
         ensemble_balls[ball].next_step()
         ensemble_balls[ball].set_position_mouvement()
     for ball in ensemble_balls:
         dic_and_ball[ball] = {
-            # "position": canvas.coords(ensemble_balls[ball].objet_canva),
-            "position":ensemble_balls[ball].position,
+            "position": ensemble_balls[ball].position,
             "norm": ensemble_balls[ball].norm,
             "angle": ensemble_balls[ball].angle,
             "temps": temps,
             "vitesse": [ensemble_balls[ball].speed[0], ensemble_balls[ball].speed[1]],
             "objet": ensemble_balls[ball].objet_canva,
         }
-        # deplacement_ball(ensemble_balls["white"].speed[0], ensemble_balls["white"].speed[1])
     print(dic_and_ball["white"]["position"])
     simu.all_frame.insertEnd(dic_and_ball)
 
@@ -93,9 +90,11 @@ def deplacement_ball(temps=0):
 
 
 def affichage(fram):
+    global nombre_fram_ecouler
     for ball in fram.info:
         canvas.coords(dic_and_ball[ball], fram.info[ball]["position"])
     next_fram = fram.prochain
+    nombre_fram_ecouler += 1
     if fram.prochain != None:
         canvas.after(main.PAT, affichage, next_fram)
 
@@ -135,6 +134,69 @@ Frame1 = tk.Frame(fenetre, borderwidth=2, relief="groove")
 
 COULEUR = "#7216CE"
 COULEUR_FOND = "#000000"
+
+
+def retour_initial():
+    global nombre_fram_ecouler
+    nombre_fram_ecouler = 0
+    # print(nombre_fram_ecouler)
+
+    for ball in simu.all_frame.head.info:
+        print(simu.all_frame.head.info)
+        print(ball)
+        canvas.coords(dic_and_ball[ball], simu.all_frame.head.info[ball]["position"])
+
+
+def demar_fin():
+    retour_fin(simu.all_frame.head)
+
+
+def retour_fin(fram):
+    global nombre_fram_ecouler
+    nombre_fram_ecouler = 0
+    while fram.prochain != None:
+        nombre_fram_ecouler += 1
+        fram = fram.prochain
+    print("fin de chaine", fram.prochain)
+    print(nombre_fram_ecouler)
+    for ball in fram.info:
+        canvas.coords(dic_and_ball[ball], fram.info[ball]["position"])
+
+
+def avance_un():
+    global nombre_fram_ecouler
+    print(nombre_fram_ecouler)
+    fram = simu.all_frame.head
+    for i in range(nombre_fram_ecouler):
+        print(i)
+        fram = fram.prochain
+    nombre_fram_ecouler += 1
+    good_fram = fram.prochain
+    for ball in good_fram.info:
+        canvas.coords(dic_and_ball[ball], good_fram.info[ball]["position"])
+
+
+def recule_un():
+    global nombre_fram_ecouler
+    print(nombre_fram_ecouler)
+    fram = simu.all_frame.head
+    for i in range(nombre_fram_ecouler):
+        print(i)
+        fram = fram.prochain
+    nombre_fram_ecouler -= 1
+    good_fram = fram.avant
+    for ball in good_fram.info:
+        canvas.coords(dic_and_ball[ball], good_fram.info[ball]["position"])
+
+
+def mettre_pause():
+    pause = True
+
+
+def mettre_continu():
+    pause = False
+
+
 retour_ini = tk.Button(
     Frame1,
     text="<<",
@@ -146,6 +208,7 @@ retour_ini = tk.Button(
     padx=10,
     pady=5,
     relief=tk.RAISED,
+    command=retour_initial,
 )
 retour_moin_un = tk.Button(
     Frame1,
@@ -158,6 +221,7 @@ retour_moin_un = tk.Button(
     padx=10,
     pady=5,
     relief=tk.RAISED,
+    command=recule_un,
 )
 pause = tk.Button(
     Frame1,
@@ -194,6 +258,7 @@ avant_un = tk.Button(
     padx=10,
     pady=5,
     relief=tk.RAISED,
+    command=avance_un,
 )
 fin_sim = tk.Button(
     Frame1,
@@ -206,6 +271,7 @@ fin_sim = tk.Button(
     padx=10,
     pady=5,
     relief=tk.RAISED,
+    command=demar_fin,
 )
 
 
@@ -262,9 +328,19 @@ for cerlce in main.TROU:
 # canvas.create_rectangle(
 #     50, 50, 806, 438, fill="black"
 # )
-canvas.create_oval(np.float64(797.7436646735027), np.float64(418.0), np.float64(817.7436646735027), np.float64(438.0), fill="red")
+canvas.create_oval(
+    np.float64(797.7436646735027),
+    np.float64(418.0),
+    np.float64(817.7436646735027),
+    np.float64(438.0),
+    fill="red",
+)
 dic_and_ball["white"] = canvas.create_oval(
-    100, 100, 100+2*main.RAYON, 100+2*main.RAYON, fill=ensemble_balls["white"].color
+    100,
+    100,
+    100 + 2 * main.RAYON,
+    100 + 2 * main.RAYON,
+    fill=ensemble_balls["white"].color,
 )
 ensemble_balls["white"].set_canva(dic_and_ball["white"])
 ensemble_balls["white"].set_position(canvas.coords(ensemble_balls["white"].objet_canva))
@@ -283,6 +359,7 @@ Frame1.place(x=250, y=main.HAUTEUR + 10, width=500, height=200)
 
 
 DIMENTION = 50
+
 
 retour_ini.place(x=0, y=0, width=DIMENTION, height=DIMENTION)
 retour_moin_un.place(x=DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
