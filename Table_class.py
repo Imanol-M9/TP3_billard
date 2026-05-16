@@ -87,6 +87,17 @@ class Table:
 
                     ball_1.speed = speed_ball(ball_1, v_rel, n)
 
+    def is_collion(self,curent_ball):
+        if self.balls[curent_ball].centre()[0] < main.BORDURE+main.RAYON:   #Collision mur gauche
+            print("gauche")
+        if self.balls[curent_ball].centre()[0] > main.LONGEUR-main.BORDURE-main.RAYON:   #Collision mur droit
+            print("droit")
+        if self.balls[curent_ball].centre()[1] < main.BORDURE+main.RAYON:   #Collision mur haut
+            print("haut")
+        if self.balls[curent_ball].centre()[1] > main.BORDURE+main.RAYON:   #Collision mur bas
+            print("Bas")
+        
+
     def collision_bande(self):
         for ball in self.balls:
             if ensemble_balls[ball].norm == 0:

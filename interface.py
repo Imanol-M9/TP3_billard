@@ -39,7 +39,8 @@ def supression_fleche():
 def deplacement_ball_initiation():
     simu.all_frame = simu.Liste_Frame()
     supression_fleche()
-    ensemble_balls["white"].set_mouvement(math.radians(-angle.get()), vitesse.get())
+    for ball in ensemble_balls:
+        ensemble_balls[ball].set_mouvement(math.radians(-angle.get()), vitesse.get())
     dic_and_ball = {}
     for ball in ensemble_balls:
         dic_and_ball[ball] = {
@@ -69,7 +70,8 @@ def deplacement_ball(temps=0):
         ensemble_balls[ball].set_position_mouvement()
     for ball in ensemble_balls:
         dic_and_ball[ball] = {
-            "position": ensemble_balls[ball].position,
+            # "position": canvas.coords(ensemble_balls[ball].objet_canva),
+            "position":ensemble_balls[ball].position,
             "norm": ensemble_balls[ball].norm,
             "angle": ensemble_balls[ball].angle,
             "temps": temps,
@@ -77,12 +79,10 @@ def deplacement_ball(temps=0):
             "objet": ensemble_balls[ball].objet_canva,
         }
         # deplacement_ball(ensemble_balls["white"].speed[0], ensemble_balls["white"].speed[1])
-
+    print(dic_and_ball["white"]["position"])
     simu.all_frame.insertEnd(dic_and_ball)
 
     if ensemble_balls["white"].norm != 0:
-        print(ensemble_balls["white"].speed[0],
-            ensemble_balls["white"].speed[1],)
         canvas.after(
             main.PAT,
             deplacement_ball,
@@ -90,15 +90,11 @@ def deplacement_ball(temps=0):
         )
     else:
         affichage(simu.all_frame.head)
-        
+
+
 def affichage(fram):
-    print(fram.info["white"]["vitesse"][0],
-        fram.info["white"]["vitesse"][1],"fram:",fram.info["white"]["norm"])
-    canvas.move(
-        dic_and_ball["white"],
-        fram.info["white"]["vitesse"][0],
-        fram.info["white"]["vitesse"][1],
-    )
+    for ball in fram.info:
+        canvas.coords(dic_and_ball[ball], fram.info[ball]["position"])
     next_fram = fram.prochain
     if fram.prochain != None:
         canvas.after(main.PAT, affichage, next_fram)
@@ -233,33 +229,45 @@ canvas.create_rectangle(
     ((main.LONGEUR - main.BORDURE), (main.HAUTEUR - main.BORDURE)),
     fill="green",
 )
+print(
+    main.BORDURE, main.BORDURE, main.LONGEUR - main.BORDURE, main.HAUTEUR - main.BORDURE
+)
 for cerlce in main.TROU:
     canvas.create_oval(*cerlce, fill="black")
 
 
-for ball in ensemble_balls:
-    INITIAL_POSITION_x = random.randint(0, 100)
-    INITIAL_POSITION_y = random.randint(0, 100)
-    # print(ball)
-    # print(ensemble_balls[ball])
-    dic_and_ball[ball] = canvas.create_oval(
-        (
-            (INITIAL_POSITION_x, INITIAL_POSITION_y),
-            (INITIAL_POSITION_x + 2 * main.RAYON, INITIAL_POSITION_y + 2 * main.RAYON),
-        ),
-        fill=ensemble_balls[ball].color,
-    )
-    ensemble_balls[ball].set_position(
-        (
-            INITIAL_POSITION_x,
-            INITIAL_POSITION_y,
-            INITIAL_POSITION_x + 2 * main.RAYON,
-            INITIAL_POSITION_y + 2 * main.RAYON,
-        )
-    )
-    ensemble_balls[ball].set_canva(dic_and_ball[ball])
-    # print(canvas.coords(ensemble_balls["white"].objet_canva))
-canvas.move(dic_and_ball["white"], 100, 250)
+# for ball in ensemble_balls:
+#     INITIAL_POSITION_x = random.randint(0,0)
+#     INITIAL_POSITION_y = random.randint(0,0)
+#     # print(ball)
+#     # print(ensemble_balls[ball])
+#     dic_and_ball[ball] = canvas.create_oval(
+#         (
+#             (INITIAL_POSITION_x, INITIAL_POSITION_y),
+#             (INITIAL_POSITION_x + 2 * main.RAYON, INITIAL_POSITION_y + 2 * main.RAYON),
+#         ),
+#         fill=ensemble_balls[ball].color,
+#     )
+#     ensemble_balls[ball].set_position(
+#         (
+#             INITIAL_POSITION_x,
+#             INITIAL_POSITION_y,
+#             INITIAL_POSITION_x + 2 * main.RAYON,
+#             INITIAL_POSITION_y + 2 * main.RAYON,
+#         )
+#     )
+#     ensemble_balls[ball].set_canva(dic_and_ball[ball])
+# print(canvas.coords(ensemble_balls["white"].objet_canva))
+# canvas.move(dic_and_ball["white"], 100, 250)
+# canvas.create_rectangle(
+#     50, 50, 806, 438, fill="black"
+# )
+canvas.create_oval(np.float64(797.7436646735027), np.float64(418.0), np.float64(817.7436646735027), np.float64(438.0), fill="red")
+dic_and_ball["white"] = canvas.create_oval(
+    100, 100, 100+2*main.RAYON, 100+2*main.RAYON, fill=ensemble_balls["white"].color
+)
+ensemble_balls["white"].set_canva(dic_and_ball["white"])
+ensemble_balls["white"].set_position(canvas.coords(ensemble_balls["white"].objet_canva))
 # print(dic_and_ball)
 # (x0, y0, x1, y1) = canvas.coords(ball)
 
