@@ -3,8 +3,12 @@ from Ball_class import Ball, ensemble_balls
 from Table_class import Table, table
 import keyboard
 import math
+import time
 import main
 import random
+import numpy as np
+import presimulation as simu
+
 
 list_fleche = []
 dic_and_ball = {}
@@ -33,59 +37,75 @@ def supression_fleche():
 
 
 def deplacement_ball_initiation():
+    simu.all_frame = simu.Liste_Frame()
     supression_fleche()
-    Vx = main.COOEFICIENT * (-vitesse.get() * math.cos(math.radians(180 + angle.get())))
-    Vy = main.COOEFICIENT * (vitesse.get() * math.sin(math.radians(180 + angle.get())))
-    ensemble_balls["white"].set_mouvement(angle.get(), vitesse.get())
-    deplacement_ball(Vx, Vy)
-
-
-def deplacement_ball(Vx, Vy, temps=0):
-    print(f"{Vx, Vy},{temps}")
+    ensemble_balls["white"].set_mouvement(math.radians(-angle.get()), vitesse.get())
+    dic_and_ball = {}
     for ball in ensemble_balls:
-        if ensemble_balls[ball].norm != 0:
-            canvas.move(dic_and_ball["white"], Vx, Vy)
-    table.step_and_write(
-        (
-            temps,
-            ensemble_balls["white"].centre(
-                canvas.coords(ensemble_balls["white"].objet_canva)
-            ),
-            [Vx, Vy],
-        )
-    )
-    if -main.EPSILON < Vx < main.EPSILON:
-        Vx = 0
-    else:
-        Vx = Vx * (1 - main.FROTEMENT * main.PAT / 100)
-    if -main.EPSILON < Vy < main.EPSILON:
-        Vy = 0
-    else:
-        Vy = Vy * (1 - main.FROTEMENT * main.PAT / 100)
+        dic_and_ball[ball] = {
+            "position": ensemble_balls[ball].position,
+            "norm": ensemble_balls[ball].norm,
+            "angle": ensemble_balls[ball].angle,
+            "vitesse": [ensemble_balls[ball].speed[0], ensemble_balls[ball].speed[1]],
+            "objet": ensemble_balls[ball].objet_canva,
+        }
+        # current["white"],np.cos*[ball]["angle"] *current["norm"],np.sin*current["angle"] *current["norm"])
+    simu.all_frame.insertEnd(dic_and_ball)
+    deplacement_ball()
 
-    print(f"{Vx, Vy},{temps}")
-    if Vx != 0 or Vy != 0:
+
+def deplacement_ball(temps=0):
+    # print(
+    #     f"{ensemble_balls['white'].speed[0], ensemble_balls['white'].speed[1], 'norm :', np.linalg.norm(ensemble_balls['white'].speed), ensemble_balls['white'].angle}"
+    # )
+    # print(ensemble_balls["white"])
+    dic_and_ball = {}
+
+    for ball in ensemble_balls:
+        # print(
+        #     f"setage de norm avec{ensemble_balls[ball].speed[0], ensemble_balls[ball].speed[1]}"
+        # )
+        ensemble_balls[ball].next_step()
+        ensemble_balls[ball].set_position_mouvement()
+    for ball in ensemble_balls:
+        dic_and_ball[ball] = {
+            "position": ensemble_balls[ball].position,
+            "norm": ensemble_balls[ball].norm,
+            "angle": ensemble_balls[ball].angle,
+            "temps": temps,
+            "vitesse": [ensemble_balls[ball].speed[0], ensemble_balls[ball].speed[1]],
+            "objet": ensemble_balls[ball].objet_canva,
+        }
+        # deplacement_ball(ensemble_balls["white"].speed[0], ensemble_balls["white"].speed[1])
+
+    simu.all_frame.insertEnd(dic_and_ball)
+
+    if ensemble_balls["white"].norm != 0:
+        print(ensemble_balls["white"].speed[0],
+            ensemble_balls["white"].speed[1],)
         canvas.after(
             main.PAT,
             deplacement_ball,
-            Vx,
-            Vy,
             temps + 1,
         )
+    else:
+        affichage(simu.all_frame.head)
+        
+def affichage(fram):
+    print(fram.info["white"]["vitesse"][0],
+        fram.info["white"]["vitesse"][1],"fram:",fram.info["white"]["norm"])
+    canvas.move(
+        dic_and_ball["white"],
+        fram.info["white"]["vitesse"][0],
+        fram.info["white"]["vitesse"][1],
+    )
+    next_fram = fram.prochain
+    if fram.prochain != None:
+        canvas.after(main.PAT, affichage, next_fram)
 
 
 def changement_test(donner):
     supression_fleche()
-    print(
-        canvas.coords(ensemble_balls["white"].objet_canva)[0]
-        + 2 * main.RAYON
-        + vitesse.get(),
-        canvas.coords(ensemble_balls["white"].objet_canva)[1]
-        + main.RAYON
-        + vitesse.get(),
-        math.cos(math.radians(angle.get())),
-        math.sin(math.radians(angle.get())),
-    )
     fleche = canvas.create_line(
         (canvas.coords(ensemble_balls["white"].objet_canva)[0]) + main.RAYON,
         canvas.coords(ensemble_balls["white"].objet_canva)[1] + main.RAYON,
@@ -106,7 +126,7 @@ fenetre.attributes("-fullscreen", True)
 
 angle = tk.Scale(fenetre, from_=0, to=360, command=changement_test)
 angel_text = tk.Label(fenetre, text="angle")
-vitesse = tk.Scale(fenetre, from_=-25, to=25, command=changement_test)
+vitesse = tk.Scale(fenetre, from_=0, to=25, command=changement_test)
 vitesse_text = tk.Label(fenetre, text="m/s")
 
 Coeffficient_friction = tk.Scale(fenetre, from_=0, to=1, resolution=0.01)
@@ -218,20 +238,29 @@ for cerlce in main.TROU:
 
 
 for ball in ensemble_balls:
-    INITIAL_POSITION = random.randint(0, 100)
-    print(ball)
-    print(ensemble_balls[ball])
+    INITIAL_POSITION_x = random.randint(0, 100)
+    INITIAL_POSITION_y = random.randint(0, 100)
+    # print(ball)
+    # print(ensemble_balls[ball])
     dic_and_ball[ball] = canvas.create_oval(
         (
-            (INITIAL_POSITION, INITIAL_POSITION),
-            (INITIAL_POSITION + 2 * main.RAYON, INITIAL_POSITION + 2 * main.RAYON),
+            (INITIAL_POSITION_x, INITIAL_POSITION_y),
+            (INITIAL_POSITION_x + 2 * main.RAYON, INITIAL_POSITION_y + 2 * main.RAYON),
         ),
         fill=ensemble_balls[ball].color,
     )
+    ensemble_balls[ball].set_position(
+        (
+            INITIAL_POSITION_x,
+            INITIAL_POSITION_y,
+            INITIAL_POSITION_x + 2 * main.RAYON,
+            INITIAL_POSITION_y + 2 * main.RAYON,
+        )
+    )
     ensemble_balls[ball].set_canva(dic_and_ball[ball])
-    print(canvas.coords(ensemble_balls["white"].objet_canva))
+    # print(canvas.coords(ensemble_balls["white"].objet_canva))
 canvas.move(dic_and_ball["white"], 100, 250)
-print(dic_and_ball)
+# print(dic_and_ball)
 # (x0, y0, x1, y1) = canvas.coords(ball)
 
 

@@ -17,14 +17,36 @@ class Ball:
         self.angle = np.radians(angle)
         self.norm = norm
         self.speed = np.array(
-            [np.cos(self.angle) * self.norm, np.sin(self.angle) * self.norm]
+            [
+                np.cos(self.angle) * self.norm,
+                np.sin(self.angle) * self.norm,
+            ]
         )
         self.rayon = main.RAYON
         self.objet_canva = objet_canva
 
+    def deplacement(self):
+        None
+
     def set_mouvement(self, angle: float, norm: float):
         self.angle = angle
         self.norm = norm
+        self.speed = [
+            np.cos(self.angle) * self.norm,
+            np.sin(self.angle) * self.norm,
+        ]
+        print("in Ball_class", self.speed)
+
+    def set_position(self, coo: list):
+        self.position = coo
+
+    def set_position_mouvement(self):
+        self.position = (
+            self.position[0] + self.speed[0],
+            self.position[1] + self.speed[1],
+            self.position[2] + self.speed[0],
+            self.position[3] + self.speed[1],
+        )
 
     def set_canva(self, objet_can):
         self.objet_canva = objet_can
@@ -55,6 +77,19 @@ class Ball:
                     "Erreur de Changement de vitesse: La vitesse n'a pas été proprement changé."
                 )
 
+    def next_step(self):
+        if -main.EPSILON < self.norm < main.EPSILON:
+            self.norm = 0
+            ensemble_balls["white"].speed[0] = 0
+        else:
+            self.norm = self.norm * (1 - main.FROTEMENT * main.PAT / 100)
+            ensemble_balls["white"].speed[0] = ensemble_balls["white"].speed[0] * (
+                1 - main.FROTEMENT * main.PAT / 100
+            )
+            ensemble_balls["white"].speed[1] = ensemble_balls["white"].speed[1] * (
+                1 - main.FROTEMENT * main.PAT / 100
+            )
+
     def step(self, friction, step: float = 0.025):
         self.speed = self.speed * (1 - friction * step)
 
@@ -62,10 +97,10 @@ class Ball:
 
         self.norm = np.linalg.norm(self.speed)
 
-    def centre(self, coordoner: tuple):
+    def centre(self):
         return (
-            coordoner[0] - main.RAYON,
-            coordoner[1] - main.RAYON,
+            self.position[0] - main.RAYON,
+            self.position[1] - main.RAYON,
         )
 
 
@@ -96,12 +131,15 @@ yellow = Ball("yellow")
 black = Ball("black")
 
 
+# ensemble_balls = {
+#     "white": white,
+#     "red": red,
+#     "purple": purple,
+#     "blue": blue,
+#     "orange": orange,
+#     "yellow": yellow,
+#     "black": black,
+# }
 ensemble_balls = {
     "white": white,
-    "red": red,
-    "purple": purple,
-    "blue": blue,
-    "orange": orange,
-    "yellow": yellow,
-    "black": black,
 }
