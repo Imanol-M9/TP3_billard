@@ -63,11 +63,9 @@ class Ball:
             np.array(self.centre()) >= pmax
         ):
             # self.angle = -(180-self.angle)
-            print("_________________Collision avec le mur___________________")
             # print(f"centre{np.array(self.centre())[0]}")
             # print(f"ex info ban {pmin}")
             if np.array(self.centre())[0] <= pmin[0]:
-                print("coll a gauche")
                 self.position = (
                     50,
                     self.position[1],
@@ -78,7 +76,6 @@ class Ball:
                 self.speed = self.speed - 2 * np.dot(np.array(self.speed), n) * n
 
             if np.array(self.centre())[1] <= pmin[1]:
-                print("coll haut")
                 self.position = (
                     self.position[0],
                     50,
@@ -89,12 +86,10 @@ class Ball:
                 self.speed = self.speed - 2 * np.dot(np.array(self.speed), n) * n
 
             if (self.centre())[0] >= pmax[0]:
-                print("coll a droit")
                 n = np.array([-1, 0])
                 self.speed = self.speed - 2 * np.dot(np.array(self.speed), n) * n
 
             if np.array(self.centre())[1] >= pmax[1]:
-                print("coll bas")
                 n = np.array([0, -1])
                 self.speed = self.speed - 2 * np.dot(np.array(self.speed), n) * n
 
@@ -120,16 +115,16 @@ class Ball:
         # print((np.array([-main.EPSILON, -main.EPSILON])))
         # print((np.array([main.EPSILON, main.EPSILON])))
 
-        self.collision_with_wall()
         # print("norm avant sep",self.norm)
         if (-main.EPSILON) <= self.norm <= main.EPSILON:
-            print("zero")
             self.norm = 0
             self.speed[0] = 0
         else:
             self.norm = self.norm * (1 - main.FROTEMENT * main.PAT / 100)
             self.speed[0] = self.speed[0] * (1 - main.FROTEMENT * main.PAT / 100)
             self.speed[1] = self.speed[1] * (1 - main.FROTEMENT * main.PAT / 100)
+
+        self.collision_with_wall()
 
     def step(self, friction, step: float = 0.025):
         self.speed = self.speed * (1 - friction * step)
@@ -172,16 +167,16 @@ yellow = Ball("yellow")
 black = Ball("black")
 
 
-# ensemble_balls = {
-#     "white": white,
-#     "red": red,
-#     "purple": purple,
-#     "blue": blue,
-#     "orange": orange,
-#     "yellow": yellow,
-#     "black": black,
-# }
 ensemble_balls = {
     "white": white,
-    # "red": red,
+    "red": red,
+    "purple": purple,
+    "blue": blue,
+    "orange": orange,
+    "yellow": yellow,
+    "black": black,
 }
+# ensemble_balls = {
+#     "white": white,
+#     # "red": red,
+# }

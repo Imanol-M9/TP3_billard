@@ -1,4 +1,5 @@
-
+import subprocess
+import os
 
 COOEFICIENT = 4
 HAUTEUR = 122 * COOEFICIENT
@@ -41,3 +42,6 @@ TROU = (
         ((BORDURE + 2 * RAYON), (HAUTEUR - BORDURE + 2 * RAYON)),
     ),
 )
+# # exec(open("./interface.py").read())
+# # subprocess.run(["python", "interface.py"])
+# os.system("python test.py")
