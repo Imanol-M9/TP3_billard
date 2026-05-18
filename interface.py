@@ -43,14 +43,12 @@ def deplacement_ball_initiation_erreur_texte():
     # la raison pour laquel je faire ça c'est pour pas avoir tout la fonction suivant en try exepte
     global is_running
     enleve_erreur()
-    print(is_running)
     try:
         if is_running == True:
             raise ex.MyError("peux pas runer un sim is deja runer")
         else:
             deplacement_ball_initiation()
     except ex.MyError as e:
-        print(e)
         affiche_erreur(e)
 
 
@@ -60,6 +58,9 @@ def deplacement_ball_initiation():
     simu.all_frame = simu.Liste_Frame()
     supression_fleche()
     ensemble_balls["white"].set_mouvement(math.radians(-angle.get()), vitesse.get())
+    for ball in ensemble_balls:
+        if ball != "white":
+            ensemble_balls[ball].set_mouvement(0, 0)
     dic_and_ball = {}
     for ball in ensemble_balls:
         dic_and_ball[ball] = Ball(
@@ -76,9 +77,10 @@ def deplacement_ball_initiation():
 
 def deplacement_ball(temps=0):
     dic_and_ball = {}
-
     for ball in ensemble_balls:
-        ensemble_balls[ball].next_step()
+        ensemble_balls[ball].friction()
+        ensemble_balls[ball].coll_avec_ball(ensemble_balls)
+        ensemble_balls[ball].collision_with_wall()
         ensemble_balls[ball].set_position_mouvement()
         dic_and_ball[ball] = Ball(
             color=ball,
@@ -86,6 +88,7 @@ def deplacement_ball(temps=0):
             norm=ensemble_balls[ball].norm,
             objet_canva=ensemble_balls[ball].objet_canva,
         )
+
 
     simu.all_frame.insertEnd(dic_and_ball)
 
@@ -149,7 +152,6 @@ COULEUR_FOND = "#000000"
 def retour_initial():
     global nombre_fram_ecouler
     nombre_fram_ecouler = 0
-    # print(nombre_fram_ecouler)
     try:
         for ball in simu.all_frame.head.info:
             canvas.coords(dic_and_ball[ball], simu.all_frame.head.info[ball].position)
@@ -185,7 +187,6 @@ def avance_un():
     try:
         fram = simu.all_frame.head
         if nombre_fram_ecouler >= simu.all_frame.taille:
-            print("Impossible de d'avancer, vous etes deja a la fin de la simulation")
             raise ex.MyError(
                 "Impossible de d'avancer, vous etes deja a la fin de la simulation"
             )
@@ -209,7 +210,6 @@ def recule_un():
     try:
         fram = simu.all_frame.head
         if nombre_fram_ecouler <= 0:
-            print("Impossible de reculer, vous etes deja au debut de la simulation")
             raise ex.MyError(
                 "Impossible de reculer, vous etes deja au debut de la simulation"
             )
@@ -229,7 +229,6 @@ def recule_un():
 
 
 def mettre_pause():
-    print("pauser")
     global pause
     pause = True
 
@@ -347,11 +346,16 @@ for ball in ensemble_balls:
     if ball == "white":
         INITIAL_POSITION_x = 100
         INITIAL_POSITION_y = 100
-    else:
-        INITIAL_POSITION_x = random.randint(0, 100)
-        INITIAL_POSITION_y = random.randint(0, 100)
-        # print(ball)
-        # print(ensemble_balls[ball])
+    if ball == "red":
+        INITIAL_POSITION_x = 100
+        INITIAL_POSITION_y = 200
+    if ball == "purple":
+        INITIAL_POSITION_x = 100
+        INITIAL_POSITION_y = 250        
+    # else:
+    #     INITIAL_POSITION_x = random.randint(100, 200)
+    #     INITIAL_POSITION_y = random.randint(100, 200)
+
     dic_and_ball[ball] = canvas.create_oval(
         (
             (INITIAL_POSITION_x, INITIAL_POSITION_y),

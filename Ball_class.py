@@ -25,19 +25,24 @@ class Ball:
         self.rayon = main.RAYON
         self.objet_canva = objet_canva
 
-    # def deplacement(self):
-    #     None
-
     def set_mouvement(self, angle: float, norm: float):
         self.angle = angle
         self.norm = norm
-        self.speed = [
+        self.speed = np.array([
             np.cos(self.angle) * self.norm,
             np.sin(self.angle) * self.norm,
-        ]
+        ])
 
     def set_position(self, coo: list):
         self.position = coo
+
+    def set_position_par_centre(self, centre_donner):
+        self.position = (
+            centre_donner[0] - main.RAYON,
+            centre_donner[1] - main.RAYON,
+            centre_donner[0] + main.RAYON,
+            centre_donner[0] + main.RAYON,
+        )
 
     def set_position_mouvement(self):
         self.position = (
@@ -58,13 +63,9 @@ class Ball:
                 main.HAUTEUR - main.BORDURE - main.RAYON,
             ]
         )
-        # print(f"pmin{pmin}, pmax{pmax}      ball:{np.array(self.centre())}")
         if np.any(np.array(self.centre()) <= pmin) or np.any(
             np.array(self.centre()) >= pmax
         ):
-            # self.angle = -(180-self.angle)
-            # print(f"centre{np.array(self.centre())[0]}")
-            # print(f"ex info ban {pmin}")
             if np.array(self.centre())[0] <= pmin[0]:
                 self.position = (
                     50,
@@ -110,21 +111,15 @@ class Ball:
     #                 "Erreur de Changement de vitesse: La vitesse n'a pas été proprement changé."
     #             )
 
-    def next_step(self):
-        # print(n)
-        # print((np.array([-main.EPSILON, -main.EPSILON])))
-        # print((np.array([main.EPSILON, main.EPSILON])))
+    def friction(self):
 
-        # print("norm avant sep",self.norm)
         if (-main.EPSILON) <= self.norm <= main.EPSILON:
             self.norm = 0
-            self.speed[0] = 0
+            self.speed = [0,0]
         else:
             self.norm = self.norm * (1 - main.FROTEMENT * main.PAT / 100)
             self.speed[0] = self.speed[0] * (1 - main.FROTEMENT * main.PAT / 100)
             self.speed[1] = self.speed[1] * (1 - main.FROTEMENT * main.PAT / 100)
-
-        self.collision_with_wall()
 
     def step(self, friction, step: float = 0.025):
         self.speed = self.speed * (1 - friction * step)
@@ -133,29 +128,58 @@ class Ball:
 
         self.norm = np.linalg.norm(self.speed)
 
+    def coll_avec_ball(self, ensemble_a_chec):
+        for ball_a_chec in ensemble_a_chec:
+            autre_ball = ensemble_a_chec[ball_a_chec]
+            if self == autre_ball:
+                return False
+            elif np.any(self.speed) == 0 and np.any(autre_ball.speed) == 0:
+                return False
+            # a ce moment il y a un collision entre deux ball
+            elif (
+                np.linalg.norm(np.array(self.centre()) - np.array(autre_ball.centre()))
+                <= main.RAYON *2
+            ):
+
+                n = (
+                    np.array(autre_ball.centre()) - np.array(self.centre())
+                ) / np.linalg.norm(
+                    np.array(autre_ball.centre()) - np.array(self.centre())
+                )
+                chevauchement = 2 * main.RAYON - np.linalg.norm(
+                    np.array(autre_ball.centre()) - np.array(self.centre())
+                )
+                self.set_position_par_centre = (
+                    np.array(self.centre()) - (chevauchement / 2) * n
+                )
+                ensemble_balls[ball_a_chec].set_position_par_centre = (
+                    np.array(autre_ball.centre()) + (chevauchement / 2) * n
+                )
+                n = (
+                    np.array(autre_ball.centre()) - np.array(self.centre())
+                ) / np.linalg.norm(
+                    np.array(autre_ball.centre()) - np.array(self.centre())
+                )
+                v_rel = np.dot(self.speed - autre_ball.speed, n)
+
+                if v_rel > 0:
+                    self.speed = self.speed - v_rel * n
+                    ensemble_balls[ball_a_chec].speed = autre_ball.speed + v_rel * n
+                    self.norm = np.linalg.norm(self.speed)
+
+                return True
+            # else:
+            #     print("que blanc techniquement")
+
+    """ centre aurais pu etre un attribue mais j'ai la flem de la devoir penser a un endroit un la
+    recalculer a chaque fram donc je le calcule, de tout facon c'est deux soustraction, c'est
+    pas un gros truc a fair """
+
     def centre(self):
         return (
             self.position[2] - main.RAYON,
             self.position[3] - main.RAYON,
         )
-
-
-def collision_dot(Delta_v, n):
-    return np.dot(Delta_v, n)
-
-
-def speed_ball(ball, v_rel, n):
-    v1 = ball.speef
-    if v_rel > 0:
-        v1 = ball.speed - v_rel * n
-    return v1
-
-
-def speed_p(p, v_rel, n):
-    v1 = p.speef
-    if v_rel > 0:
-        v1 = p.speed + v_rel * n
-    return v1
 
 
 white = Ball("White")
@@ -171,12 +195,8 @@ ensemble_balls = {
     "white": white,
     "red": red,
     "purple": purple,
-    "blue": blue,
-    "orange": orange,
-    "yellow": yellow,
-    "black": black,
+    # "blue": blue,
+    # "orange": orange,
+    # "yellow": yellow,
+    # "black": black,
 }
-# ensemble_balls = {
-#     "white": white,
-#     # "red": red,
-# }

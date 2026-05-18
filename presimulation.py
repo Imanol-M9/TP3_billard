@@ -48,14 +48,12 @@ class Liste_Frame:
 
     def traverseFromEnd(self):
         temp = self.head
-        print("Traversing from Tail:\t", end="")
         while temp.prochain is not None:
             temp = temp.prochain
         tail = temp
         while tail is not None:
-            print("{}\t".format(tail.info), end="")
             tail = tail.avant
-        print()
+
 
     # def insertAfter(self,searchItem, value):
     #   newNode = Frame(data=value)
@@ -93,7 +91,6 @@ class Liste_Frame:
         while temp.prochain is not None and temp.info is not searchItem:
             temp = temp.prochain
 
-        print("Deleted Node\t{}".format(searchItem))
         return temp
 
 
