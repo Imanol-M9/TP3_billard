@@ -59,7 +59,10 @@ class Ball:
 
     def collision_with_wall(self):
         pmin = np.array(
-            [main.cfg["BORDURE"] + main.cfg["RAYON"], main.cfg["BORDURE"] + main.cfg["RAYON"]]
+            [
+                main.cfg["BORDURE"] + main.cfg["RAYON"],
+                main.cfg["BORDURE"] + main.cfg["RAYON"],
+            ]
         )
         pmax = np.array(
             [
@@ -98,23 +101,6 @@ class Ball:
                 n = np.array([0, -1])
                 self.speed = self.speed - 2 * np.dot(np.array(self.speed), n) * n
 
-    # def ismobile(self, epsilon):
-    #     if math.sqrt(self.speed[0] ** 2 + self.speed[1] ** 2) >= epsilon:
-    #         return True
-    #     else:
-    #         return False
-
-    # def speed_shift(self, Z: str):
-    #     match Z:
-    #         case "x" | "X":
-    #             self.speed[0] *= -1
-    #         case "y" | "Y":
-    #             self.speed[1] *= 1
-    #         case _:
-    #             print(
-    #                 "Erreur de Changement de vitesse: La vitesse n'a pas été proprement changé."
-    #             )
-
     def friction(self):
 
         if (-main.cfg["EPSILON"]) <= self.norm <= main.cfg["EPSILON"]:
@@ -140,9 +126,9 @@ class Ball:
         for ball_a_chec in ensemble_a_chec:
             autre_ball = ensemble_a_chec[ball_a_chec]
             if self == autre_ball:
-                return False
+                pass
             elif np.any(self.speed) == 0 and np.any(autre_ball.speed) == 0:
-                return False
+                pass
             # a ce moment il y a un collision entre deux ball
             elif (
                 np.linalg.norm(np.array(self.centre()) - np.array(autre_ball.centre()))
@@ -174,10 +160,6 @@ class Ball:
                     ensemble_balls[ball_a_chec].speed = autre_ball.speed + v_rel * n
                     self.norm = np.linalg.norm(self.speed)
 
-                return True
-            # else:
-            #     print("que blanc techniquement")
-
     """ centre aurais pu etre un attribue mais j'ai la flem de la devoir penser a un endroit un la
     recalculer a chaque fram donc je le calcule, de tout facon c'est deux soustraction, c'est
     pas un gros truc a fair """
@@ -196,14 +178,31 @@ blue = Ball("blue")
 orange = Ball("orange")
 yellow = Ball("yellow")
 black = Ball("black")
-
+violet = Ball("violet")
+teal = Ball("teal")
+indianred4 = Ball("indianred4")
+midnightblue = Ball("midnightblue")
+darkgreen = Ball("darkgreen")
+maroon = Ball("maroon")
+indigo = Ball("indigo")
+tan = Ball("tan")
+olive = Ball("olive")
 
 ensemble_balls = {
     "white": white,
     "red": red,
     "purple": purple,
-    # "blue": blue,
-    # "orange": orange,
-    # "yellow": yellow,
-    # "black": black,
+    "blue": blue,
+    "orange": orange,
+    "yellow": yellow,
+    "black": black,
+    "violet": violet,
+    "teal": teal,
+    "indianred4": indianred4,
+    "midnightblue": midnightblue,
+    "darkgreen": darkgreen,
+    "maroon": maroon,
+    "indigo": indigo,
+    "tan": tan,
+    "olive": olive,
 }

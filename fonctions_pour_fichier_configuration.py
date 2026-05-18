@@ -24,8 +24,8 @@ def lire_json(page_simu, canva, dic_ball, ensemble_ball):
         messagebox.showerror("Erreur", "Fichier introuvable.")
     except json.JSONDecodeError:
         messagebox.showerror("Erreur", "JSON invalide.")
-    # except Exception as e:
-    #     messagebox.showerror("Erreur", str(e))
+    except Exception as e:
+        messagebox.showerror("Erreur", str(e))
 
 
 def afficher_donnees(fenaitre, canva, dic_ball, ensemble_ball):
