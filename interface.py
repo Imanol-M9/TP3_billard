@@ -7,9 +7,10 @@ import math
 import main
 import numpy as np
 import exception_perso as ex
+import fonctions_pour_fichier_configuration as fich_con
 import random
 
-
+is_renable = True
 pause = False
 is_running = False
 nombre_fram_ecouler = 0
@@ -23,14 +24,16 @@ def fonction_quit():
 
 def DLC():
     Coeffficient_friction_text.place(
-        x=45, y=main.HAUTEUR + 140 + 100, width=55, height=20
+        x=45, y=main.cfg["HAUTEUR"] + 140 + 100, width=55, height=20
     )
-    Coeffficient_friction.place(x=32, y=main.HAUTEUR + 140, width=50, height=100)
-    Coeffficient_de_restitution.place(x=102, y=main.HAUTEUR + 140, width=50, height=100)
+    Coeffficient_friction.place(x=32, y=main.cfg["HAUTEUR"] + 140, width=50, height=100)
+    Coeffficient_de_restitution.place(
+        x=102, y=main.cfg["HAUTEUR"] + 140, width=50, height=100
+    )
     Coeffficient_de_restitution_texte.place(
-        x=109, y=main.HAUTEUR + 240, width=55, height=20
+        x=109, y=main.cfg["HAUTEUR"] + 240, width=55, height=20
     )
-    bouton.place(x=10, y=main.HAUTEUR + 150 + 120)
+    bouton.place(x=10, y=main.cfg["HAUTEUR"] + 150 + 120)
 
 
 def supression_fleche():
@@ -41,11 +44,13 @@ def supression_fleche():
 
 def deplacement_ball_initiation_erreur_texte():
     # la raison pour laquel je faire ça c'est pour pas avoir tout la fonction suivant en try exepte
-    global is_running
+    global is_running,is_renable
     enleve_erreur()
     try:
         if is_running == True:
             raise ex.MyError("peux pas runer un sim is deja runer")
+        if is_renable == False:
+            raise ex.MyError("vous etres en deplacement dans la simulation \n imposible de lancer un ball")
         else:
             deplacement_ball_initiation()
     except ex.MyError as e:
@@ -89,7 +94,6 @@ def deplacement_ball(temps=0):
             objet_canva=ensemble_balls[ball].objet_canva,
         )
 
-
     simu.all_frame.insertEnd(dic_and_ball)
 
     if ensemble_balls["white"].norm != 0:
@@ -106,20 +110,25 @@ def affichage(fram):
     next_fram = fram.prochain
     nombre_fram_ecouler += 1
     if fram.prochain != None:
-        canvas.after(main.PAT, affichage, next_fram)
+        canvas.after(main.cfg["PAT"], affichage, next_fram)
     else:
         print("fin affichage")
         is_running = False
+    fram = simu.all_frame.head
+    while fram.prochain != None:
+        fram = fram.prochain
+    print(fram)
+    fich_con.conteneur["donnees"] = fram.info
 
 
 def changement_test(donner):
     supression_fleche()
     fleche = canvas.create_line(
-        ((canvas.coords(ensemble_balls["white"].objet_canva)[0]) + main.RAYON),
-        (canvas.coords(ensemble_balls["white"].objet_canva)[1] + main.RAYON),
-        (canvas.coords(ensemble_balls["white"].objet_canva)[0] + main.RAYON)
+        ((canvas.coords(ensemble_balls["white"].objet_canva)[0]) + main.cfg["RAYON"]),
+        (canvas.coords(ensemble_balls["white"].objet_canva)[1] + main.cfg["RAYON"]),
+        (canvas.coords(ensemble_balls["white"].objet_canva)[0] + main.cfg["RAYON"])
         + -vitesse.get() * math.cos(math.radians(180 + angle.get())) * 2,
-        (canvas.coords(ensemble_balls["white"].objet_canva)[1] + main.RAYON)
+        (canvas.coords(ensemble_balls["white"].objet_canva)[1] + main.cfg["RAYON"])
         + vitesse.get() * math.sin(math.radians(180 + angle.get())) * 2,
         arrow="last",
         width=3,
@@ -150,7 +159,8 @@ COULEUR_FOND = "#000000"
 
 
 def retour_initial():
-    global nombre_fram_ecouler
+    global nombre_fram_ecouler, is_renable
+    is_renable = False
     nombre_fram_ecouler = 0
     try:
         for ball in simu.all_frame.head.info:
@@ -173,17 +183,19 @@ def demar_fin():
 
 
 def retour_fin(fram):
-    global nombre_fram_ecouler
+    global nombre_fram_ecouler,is_renable
     nombre_fram_ecouler = 0
+    is_renable =True
     while fram.prochain != None:
         nombre_fram_ecouler += 1
         fram = fram.prochain
     for ball in fram.info:
         canvas.coords(dic_and_ball[ball], fram.info[ball].position)
+    print(is_renable)
 
 
 def avance_un():
-    global nombre_fram_ecouler
+    global nombre_fram_ecouler, is_renable
     try:
         fram = simu.all_frame.head
         if nombre_fram_ecouler >= simu.all_frame.taille:
@@ -197,16 +209,20 @@ def avance_un():
         for ball in good_fram.info:
             canvas.coords(dic_and_ball[ball], good_fram.info[ball].position)
     except ex.MyError as e:
+        is_renable = True
         affiche_erreur(e)
     except AttributeError:
+        is_renable = True
         message = "imposible de faire l'action d'avance d'une frame \n si auqu'un simulation n'a ete faite prealablement"
         affiche_erreur(message)
+        print(is_renable)
     else:
         enleve_erreur()
 
 
 def recule_un():
-    global nombre_fram_ecouler
+    global nombre_fram_ecouler,is_renable
+    is_renable = False
     try:
         fram = simu.all_frame.head
         if nombre_fram_ecouler <= 0:
@@ -326,15 +342,15 @@ erreur_fram = tk.Label(fenetre, text="")
 
 canvas = tk.Canvas(
     fenetre,
-    width=main.LONGEUR,
-    height=main.HAUTEUR,
+    width=main.cfg["LONGEUR"],
+    height=main.cfg["HAUTEUR"],
     bg="#4E4E4E",
 )
-canvas.place(x=0, y=0, width=main.LONGEUR, height=main.HAUTEUR)
+canvas.place(x=0, y=0, width=main.cfg["LONGEUR"], height=main.cfg["HAUTEUR"])
 
 canvas.create_rectangle(
-    (main.BORDURE, main.BORDURE),
-    ((main.LONGEUR - main.BORDURE), (main.HAUTEUR - main.BORDURE)),
+    (main.cfg["BORDURE"], main.cfg["BORDURE"]),
+    ((main.cfg["LONGEUR"] - main.cfg["BORDURE"]), (main.cfg["HAUTEUR"] - main.cfg["BORDURE"])),
     fill="green",
 )
 
@@ -351,7 +367,7 @@ for ball in ensemble_balls:
         INITIAL_POSITION_y = 200
     if ball == "purple":
         INITIAL_POSITION_x = 100
-        INITIAL_POSITION_y = 250        
+        INITIAL_POSITION_y = 250
     # else:
     #     INITIAL_POSITION_x = random.randint(100, 200)
     #     INITIAL_POSITION_y = random.randint(100, 200)
@@ -360,8 +376,8 @@ for ball in ensemble_balls:
         (
             (INITIAL_POSITION_x, INITIAL_POSITION_y),
             (
-                INITIAL_POSITION_x + 2 * main.RAYON,
-                INITIAL_POSITION_y + 2 * main.RAYON,
+                INITIAL_POSITION_x + 2 * main.cfg["RAYON"],
+                INITIAL_POSITION_y + 2 * main.cfg["RAYON"],
             ),
         ),
         fill=ensemble_balls[ball].color,
@@ -370,8 +386,8 @@ for ball in ensemble_balls:
         (
             INITIAL_POSITION_x,
             INITIAL_POSITION_y,
-            INITIAL_POSITION_x + 2 * main.RAYON,
-            INITIAL_POSITION_y + 2 * main.RAYON,
+            INITIAL_POSITION_x + 2 * main.cfg["RAYON"],
+            INITIAL_POSITION_y + 2 * main.cfg["RAYON"],
         )
     )
     ensemble_balls[ball].set_canva(dic_and_ball[ball])
@@ -383,15 +399,15 @@ ensemble_balls["white"].set_position(canvas.coords(ensemble_balls["white"].objet
 # (x0, y0, x1, y1) = canvas.coords(ball)
 
 
-bouton.place(x=10, y=main.HAUTEUR + 150, width=200, height=30)
-erreur_fram.place(x=main.LONGEUR + 25, y=10, width=300, height=100)
-angel_text.place(x=45, y=main.HAUTEUR + 115, width=40, height=20)
-angle.place(x=32, y=main.HAUTEUR + 15, width=50, height=100)
+bouton.place(x=10, y=main.cfg["HAUTEUR"] + 150, width=200, height=30)
+erreur_fram.place(x=main.cfg["LONGEUR"] + 25, y=10, width=300, height=100)
+angel_text.place(x=45, y=main.cfg["HAUTEUR"] + 115, width=40, height=20)
+angle.place(x=32, y=main.cfg["HAUTEUR"] + 15, width=50, height=100)
 
-vitesse_text.place(x=109, y=main.HAUTEUR + 115, width=40, height=20)
-vitesse.place(x=102, y=main.HAUTEUR + 15, width=50, height=100)
+vitesse_text.place(x=109, y=main.cfg["HAUTEUR"] + 115, width=40, height=20)
+vitesse.place(x=102, y=main.cfg["HAUTEUR"] + 15, width=50, height=100)
 
-Frame1.place(x=250, y=main.HAUTEUR + 10, width=500, height=200)
+Frame1.place(x=250, y=main.cfg["HAUTEUR"] + 10, width=500, height=200)
 
 
 DIMENTION = 50
@@ -403,6 +419,13 @@ retour_moin_un.place(x=DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
 # continu.place(x=3 * DIMENTION, y=DIMENTION, width=DIMENTION, height=DIMENTION)
 avant_un.place(x=3 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
 fin_sim.place(x=4 * DIMENTION, y=0, width=DIMENTION, height=DIMENTION)
+
+tk.Button(Frame1, text="Ouvrir", command=lambda: fich_con.lire_json(fenetre,canvas,dic_and_ball,ensemble_balls)).place(
+    x=DIMENTION * 6, y=0, width=DIMENTION, height=DIMENTION
+)
+tk.Button(Frame1, text="Sauvegarder", command=fich_con.sauvegarder).place(
+    x=DIMENTION * 6, y=DIMENTION, width=DIMENTION, height=DIMENTION
+)
 
 keyboard.add_hotkey("esc", fonction_quit)
 keyboard.add_hotkey("Alt+f+4", DLC)

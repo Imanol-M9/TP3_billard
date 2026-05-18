@@ -22,26 +22,28 @@ class Ball:
                 np.sin(self.angle) * self.norm,
             ]
         )
-        self.rayon = main.RAYON
+        self.rayon = main.cfg["RAYON"]
         self.objet_canva = objet_canva
 
     def set_mouvement(self, angle: float, norm: float):
         self.angle = angle
         self.norm = norm
-        self.speed = np.array([
-            np.cos(self.angle) * self.norm,
-            np.sin(self.angle) * self.norm,
-        ])
+        self.speed = np.array(
+            [
+                np.cos(self.angle) * self.norm,
+                np.sin(self.angle) * self.norm,
+            ]
+        )
 
     def set_position(self, coo: list):
         self.position = coo
 
     def set_position_par_centre(self, centre_donner):
         self.position = (
-            centre_donner[0] - main.RAYON,
-            centre_donner[1] - main.RAYON,
-            centre_donner[0] + main.RAYON,
-            centre_donner[0] + main.RAYON,
+            centre_donner[0] - main.cfg["RAYON"],
+            centre_donner[1] - main.cfg["RAYON"],
+            centre_donner[0] + main.cfg["RAYON"],
+            centre_donner[0] + main.cfg["RAYON"],
         )
 
     def set_position_mouvement(self):
@@ -56,11 +58,13 @@ class Ball:
         self.objet_canva = objet_can
 
     def collision_with_wall(self):
-        pmin = np.array([main.BORDURE + main.RAYON, main.BORDURE + main.RAYON])
+        pmin = np.array(
+            [main.cfg["BORDURE"] + main.cfg["RAYON"], main.cfg["BORDURE"] + main.cfg["RAYON"]]
+        )
         pmax = np.array(
             [
-                main.LONGEUR - main.BORDURE - main.RAYON,
-                main.HAUTEUR - main.BORDURE - main.RAYON,
+                main.cfg["LONGEUR"] - main.cfg["BORDURE"] - main.cfg["RAYON"],
+                main.cfg["HAUTEUR"] - main.cfg["BORDURE"] - main.cfg["RAYON"],
             ]
         )
         if np.any(np.array(self.centre()) <= pmin) or np.any(
@@ -70,7 +74,7 @@ class Ball:
                 self.position = (
                     50,
                     self.position[1],
-                    50 + 2 * main.RAYON,
+                    50 + 2 * main.cfg["RAYON"],
                     self.position[3],
                 )
                 n = np.array([1, 0])
@@ -81,7 +85,7 @@ class Ball:
                     self.position[0],
                     50,
                     self.position[2],
-                    50 + 2 * main.RAYON,
+                    50 + 2 * main.cfg["RAYON"],
                 )
                 n = np.array([0, 1])
                 self.speed = self.speed - 2 * np.dot(np.array(self.speed), n) * n
@@ -113,13 +117,17 @@ class Ball:
 
     def friction(self):
 
-        if (-main.EPSILON) <= self.norm <= main.EPSILON:
+        if (-main.cfg["EPSILON"]) <= self.norm <= main.cfg["EPSILON"]:
             self.norm = 0
-            self.speed = [0,0]
+            self.speed = [0, 0]
         else:
-            self.norm = self.norm * (1 - main.FROTEMENT * main.PAT / 100)
-            self.speed[0] = self.speed[0] * (1 - main.FROTEMENT * main.PAT / 100)
-            self.speed[1] = self.speed[1] * (1 - main.FROTEMENT * main.PAT / 100)
+            self.norm = self.norm * (1 - main.cfg["FROTEMENT"] * main.cfg["PAT"] / 100)
+            self.speed[0] = self.speed[0] * (
+                1 - main.cfg["FROTEMENT"] * main.cfg["PAT"] / 100
+            )
+            self.speed[1] = self.speed[1] * (
+                1 - main.cfg["FROTEMENT"] * main.cfg["PAT"] / 100
+            )
 
     def step(self, friction, step: float = 0.025):
         self.speed = self.speed * (1 - friction * step)
@@ -138,15 +146,14 @@ class Ball:
             # a ce moment il y a un collision entre deux ball
             elif (
                 np.linalg.norm(np.array(self.centre()) - np.array(autre_ball.centre()))
-                <= main.RAYON *2
+                <= main.cfg["RAYON"] * 2
             ):
-
                 n = (
                     np.array(autre_ball.centre()) - np.array(self.centre())
                 ) / np.linalg.norm(
                     np.array(autre_ball.centre()) - np.array(self.centre())
                 )
-                chevauchement = 2 * main.RAYON - np.linalg.norm(
+                chevauchement = 2 * main.cfg["RAYON"] - np.linalg.norm(
                     np.array(autre_ball.centre()) - np.array(self.centre())
                 )
                 self.set_position_par_centre = (
@@ -177,8 +184,8 @@ class Ball:
 
     def centre(self):
         return (
-            self.position[2] - main.RAYON,
-            self.position[3] - main.RAYON,
+            self.position[2] - main.cfg["RAYON"],
+            self.position[3] - main.cfg["RAYON"],
         )
 
 

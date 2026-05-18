@@ -1,45 +1,46 @@
-import subprocess
-import os
+import json
 
-COOEFICIENT = 4
-HAUTEUR = 122 * COOEFICIENT
-LONGEUR = 214 * COOEFICIENT
-BORDURE = 10 * COOEFICIENT
-RAYON = 2.5 * COOEFICIENT
-PAT = 20
-FROTEMENT = 0.3
-EPSILON = 0.05
+
+with open("fichier_configuration.json", "r", encoding="utf-8") as f:
+    cfg = json.load(f)
+
 
 TROU = (
     (
-        ((LONGEUR // 2 - 2 * RAYON), (BORDURE - 2 * RAYON)),
-        ((LONGEUR // 2 + 2 * RAYON), (BORDURE + 2 * RAYON)),
+        ((cfg["LONGEUR"] // 2 - 2 * cfg["RAYON"]), (cfg["BORDURE"] - 2 * cfg["RAYON"])),
+        ((cfg["LONGEUR"] // 2 + 2 * cfg["RAYON"]), (cfg["BORDURE"] + 2 * cfg["RAYON"])),
     ),
     (
         (
-            (LONGEUR // 2 - 2 * RAYON),
-            (HAUTEUR - BORDURE - 2 * RAYON),
+            (cfg["LONGEUR"] // 2 - 2 * cfg["RAYON"]),
+            (cfg["HAUTEUR"] - cfg["BORDURE"] - 2 * cfg["RAYON"]),
         ),
         (
-            (LONGEUR // 2 + 2 * RAYON),
-            (HAUTEUR - BORDURE + 2 * RAYON),
+            (cfg["LONGEUR"] // 2 + 2 * cfg["RAYON"]),
+            (cfg["HAUTEUR"] - cfg["BORDURE"] + 2 * cfg["RAYON"]),
         ),
     ),
     (
-        ((BORDURE - 2 * RAYON), (BORDURE - 2 * RAYON)),
-        ((BORDURE + 2 * RAYON), (BORDURE + 2 * RAYON)),
+        ((cfg["BORDURE"] - 2 * cfg["RAYON"]), (cfg["BORDURE"] - 2 * cfg["RAYON"])),
+        ((cfg["BORDURE"] + 2 * cfg["RAYON"]), (cfg["BORDURE"] + 2 * cfg["RAYON"])),
     ),
     (
-        ((LONGEUR - BORDURE - 2 * RAYON), (HAUTEUR - BORDURE - 2 * RAYON)),
-        ((LONGEUR - BORDURE + 2 * RAYON), (HAUTEUR - BORDURE + 2 * RAYON)),
+        (
+            (cfg["LONGEUR"] - cfg["BORDURE"] - 2 * cfg["RAYON"]),
+            (cfg["HAUTEUR"] - cfg["BORDURE"] - 2 * cfg["RAYON"]),
+        ),
+        (
+            (cfg["LONGEUR"] - cfg["BORDURE"] + 2 * cfg["RAYON"]),
+            (cfg["HAUTEUR"] - cfg["BORDURE"] + 2 * cfg["RAYON"]),
+        ),
     ),
     (
-        ((LONGEUR - BORDURE - 2 * RAYON), (BORDURE - 2 * RAYON)),
-        ((LONGEUR - BORDURE + 2 * RAYON), (BORDURE + 2 * RAYON)),
+        ((cfg["LONGEUR"] - cfg["BORDURE"] - 2 * cfg["RAYON"]), (cfg["BORDURE"] - 2 * cfg["RAYON"])),
+        ((cfg["LONGEUR"] - cfg["BORDURE"] + 2 * cfg["RAYON"]), (cfg["BORDURE"] + 2 * cfg["RAYON"])),
     ),
     (
-        ((BORDURE - 2 * RAYON), (HAUTEUR - BORDURE - 2 * RAYON)),
-        ((BORDURE + 2 * RAYON), (HAUTEUR - BORDURE + 2 * RAYON)),
+        ((cfg["BORDURE"] - 2 * cfg["RAYON"]), (cfg["HAUTEUR"] - cfg["BORDURE"] - 2 * cfg["RAYON"])),
+        ((cfg["BORDURE"] + 2 * cfg["RAYON"]), (cfg["HAUTEUR"] - cfg["BORDURE"] + 2 * cfg["RAYON"])),
     ),
 )
 # # exec(open("./interface.py").read())
