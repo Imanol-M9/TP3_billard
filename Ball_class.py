@@ -75,9 +75,9 @@ class Ball:
         ):
             if np.array(self.centre())[0] <= pmin[0]:
                 self.position = (
-                    50,
+                    main.cfg["BORDURE"],
                     self.position[1],
-                    50 + 2 * main.cfg["RAYON"],
+                    main.cfg["BORDURE"] + 2 * main.cfg["RAYON"],
                     self.position[3],
                 )
                 n = np.array([1, 0])
@@ -86,9 +86,9 @@ class Ball:
             if np.array(self.centre())[1] <= pmin[1]:
                 self.position = (
                     self.position[0],
-                    50,
+                    main.cfg["BORDURE"],
                     self.position[2],
-                    50 + 2 * main.cfg["RAYON"],
+                    main.cfg["BORDURE"] + 2 * main.cfg["RAYON"],
                 )
                 n = np.array([0, 1])
                 self.speed = self.speed - 2 * np.dot(np.array(self.speed), n) * n

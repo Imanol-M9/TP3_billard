@@ -98,12 +98,16 @@ def deplacement_ball(temps=0):
 
     simu.all_frame.insertEnd(dic_and_ball)
 
-    if ensemble_balls["white"].norm != 0:
+    ball_imobile = 0
+    for ball in ensemble_balls:
+        if ensemble_balls[ball].norm == 0:
+            ball_imobile +=1
+    if ball_imobile != len(ensemble_balls):
         temps += 1
         deplacement_ball(temps)
     else:
         affichage(simu.all_frame.head)
-
+        
 
 def affichage(fram):
     global nombre_fram_ecouler, is_running, pause
@@ -115,7 +119,7 @@ def affichage(fram):
         canvas.after(main.cfg["PAT"], affichage, next_fram)
     else:
         is_running = False
-        bouton.config(fg="balck ")
+        bouton.config(fg="black")
         fram = simu.all_frame.head
         while fram.prochain != None:
             fram = fram.prochain
